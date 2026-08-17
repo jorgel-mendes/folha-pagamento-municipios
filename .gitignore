@@ -1,0 +1,23 @@
+# Dados brutos e intermediários (~27 GB). Regeneráveis com pipeline/01_bronze.py
+# e pipeline/02_silver.py -- ver pipeline/README.md.
+dados/bronze/
+dados/silver/
+
+# Saídas de dados da camada gold: regeneráveis em segundos a partir da silver.
+# A documentação que sai junto (dicionario.md, validacao.md) fica versionada.
+dados/gold/**/*.parquet
+dados/gold/**/*.csv
+
+# Sobras do spike do E1, superadas pelo pipeline. Continuam no disco, fora do repo:
+# a validação que elas produziram está documentada em e1-resultados.md.
+dados/interim/
+pipeline/inss_agrega_municipio.py
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.uv/
+
+# macOS
+.DS_Store

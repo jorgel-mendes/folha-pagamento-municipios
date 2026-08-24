@@ -222,3 +222,90 @@ tr[data-linha="bolsa_familia"]   { --cor: var(--c-bf); }
 .linhas tbody tr[data-ausente] .valor,
 .linhas tbody tr[data-ausente] .barra-pct { color: var(--tinta-tenue); }
 .linhas tbody tr[data-ausente] .barra { opacity: 0.45; }
+
+/* ================================================================ panorama */
+:root {
+  --r-N:  #4a9d8f;
+  --r-NE: #d4763a;
+  --r-CO: #9b7fbd;
+  --r-SE: #4879b8;
+  --r-S:  #6a9c3d;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema="claro"]) {
+    --r-N:  #5fbfae;  --r-NE: #eb8f4d;  --r-CO: #b79ad6;
+    --r-SE: #6b9fdb;  --r-S:  #8ec456;
+  }
+}
+
+.panorama { margin-top: 2.5rem; }
+.panorama h2 { font-size: 1.25rem; margin: 0 0 0.375rem; letter-spacing: -0.01em; }
+.panorama-intro { margin: 0 0 1rem; color: var(--tinta-fraca); font-size: 0.9375rem; max-width: 44rem; }
+
+.seletor, .filtros { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-bottom: 1rem; }
+.seletor .rotulo, .filtros .rotulo {
+  font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--tinta-fraca); flex: 0 0 auto; margin-right: 0.25rem;
+}
+/* Simetria: as quatro fontes tem exatamente o mesmo peso visual e o mesmo custo de clique.
+   E requisito do projeto, nao preferencia estetica -- e o que sustenta a neutralidade. */
+.seletor button {
+  font: inherit; font-size: 0.8125rem; font-weight: 600; padding: 0.4375rem 0.75rem;
+  flex: 1 1 auto; min-width: 8.5rem; cursor: pointer; text-align: center;
+  color: var(--tinta-fraca); background: var(--papel);
+  border: 1px solid var(--linha-forte); border-radius: var(--raio);
+}
+.seletor button[aria-pressed="true"] { color: var(--papel); background: var(--destaque); border-color: var(--destaque); }
+
+.filtros label { font-size: 0.8125rem; color: var(--tinta-fraca); display: flex; align-items: center; gap: 0.375rem; }
+.filtros select {
+  font: inherit; font-size: 0.8125rem; padding: 0.3125rem 0.5rem; color: var(--tinta);
+  background: var(--papel); border: 1px solid var(--linha-forte); border-radius: var(--raio);
+}
+
+.figura { margin: 0 0 0.75rem; }
+.figura svg { display: block; width: 100%; height: auto; overflow: visible; }
+.descricao { display: block; font-size: 0.8125rem; color: var(--tinta-fraca); margin-top: 0.5rem; }
+
+.no { stroke: var(--papel); stroke-width: 0.4; }
+.no.apagado { opacity: 0.12; }
+.no.alvo { stroke: var(--destaque); stroke-width: 2.2; paint-order: stroke; }
+.eixo path, .eixo line { stroke: var(--linha); }
+.eixo text { fill: var(--tinta-fraca); font-family: var(--fonte-texto); font-size: 11px; }
+.rotulo-alvo { fill: var(--tinta); font-size: 12px; font-weight: 700; paint-order: stroke; stroke: var(--papel); stroke-width: 3.5; }
+
+.legenda { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; font-size: 0.75rem; color: var(--tinta-fraca); margin-bottom: 1rem; }
+.legenda span { display: flex; align-items: center; gap: 0.3125rem; }
+.legenda span::before { content: ""; width: 0.625rem; height: 0.625rem; border-radius: 50%; background: var(--cor-reg); }
+.legenda [data-regiao="N"]  { --cor-reg: var(--r-N); }
+.legenda [data-regiao="NE"] { --cor-reg: var(--r-NE); }
+.legenda [data-regiao="CO"] { --cor-reg: var(--r-CO); }
+.legenda [data-regiao="SE"] { --cor-reg: var(--r-SE); }
+.legenda [data-regiao="S"]  { --cor-reg: var(--r-S); }
+
+.dica {
+  position: absolute; z-index: 30; pointer-events: none; max-width: 15rem;
+  padding: 0.5rem 0.625rem; font-size: 0.8125rem; line-height: 1.35;
+  background: var(--papel); color: var(--tinta);
+  border: 1px solid var(--linha-forte); border-radius: var(--raio);
+  box-shadow: 0 6px 18px rgb(0 0 0 / 0.18);
+}
+.dica[hidden] { display: none; }
+.dica strong { display: block; }
+.dica span { color: var(--tinta-fraca); }
+
+.ranking { width: 100%; border-collapse: collapse; background: var(--papel); border: 1px solid var(--linha-forte); }
+.ranking caption { text-align: left; padding: 0 0 0.5rem; font-size: 0.8125rem; color: var(--tinta-fraca); }
+.ranking th, .ranking td { padding: 0.5rem 0.75rem; text-align: left; font-size: 0.875rem; border-bottom: 1px solid var(--linha); }
+.ranking thead th { font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--tinta-fraca); white-space: nowrap; }
+.ranking .num { text-align: right; }
+.ranking td.num { font-family: var(--fonte-num); font-variant-numeric: tabular-nums; }
+.ranking tbody tr.alvo { background: var(--fundo); }
+.ranking tbody tr.alvo th { font-weight: 700; }
+.ranking .marca { display: inline-block; width: 0.5rem; height: 0.5rem; border-radius: 50%; margin-right: 0.4375rem; background: var(--cor-reg, var(--tinta-tenue)); }
+.ranking-obs { font-size: 0.75rem; color: var(--tinta-fraca); margin: 0.5rem 0 0; }
+
+@media (max-width: 47.99rem) {
+  .ranking td:nth-child(4), .ranking th:nth-child(4) { display: none; }
+  .seletor button { min-width: 0; flex: 1 1 45%; }
+}

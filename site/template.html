@@ -29,6 +29,66 @@
       <!--CONTRACHEQUE-->
     </section>
 
+
+    <section class="panorama js-apenas" id="panorama" aria-labelledby="panorama-titulo">
+      <h2 id="panorama-titulo">Panorama nacional</h2>
+      <p class="panorama-intro">
+        Cada ponto é um município. A posição mostra quanto da renda registrada vem da fonte
+        escolhida; o tamanho, a população. Escolha a fonte para ver a quais mudanças de regra
+        cada lugar está mais exposto.
+      </p>
+
+      <div class="seletor" role="group" aria-labelledby="seletor-rotulo">
+        <span class="rotulo" id="seletor-rotulo">Fonte de renda</span>
+        <button type="button" data-fonte="salario_privado" aria-pressed="false">Salário privado</button>
+        <button type="button" data-fonte="salario_publico" aria-pressed="false">Folha pública</button>
+        <button type="button" data-fonte="previdencia" aria-pressed="true">Previdência</button>
+        <button type="button" data-fonte="bolsa_familia" aria-pressed="false">Bolsa Família</button>
+      </div>
+
+      <figure class="figura">
+        <svg id="enxame" role="img" aria-labelledby="enxame-titulo" aria-describedby="enxame-desc"></svg>
+        <figcaption>
+          <span id="enxame-titulo" class="sr-only">Distribuição dos municípios brasileiros pela
+            participação de cada fonte na renda registrada</span>
+          <span id="enxame-desc" class="descricao"></span>
+        </figcaption>
+      </figure>
+
+      <div class="legenda" aria-hidden="true">
+        <span data-regiao="N">Norte</span><span data-regiao="NE">Nordeste</span><span data-regiao="CO">Centro-Oeste</span><span data-regiao="SE">Sudeste</span><span data-regiao="S">Sul</span>
+      </div>
+
+      <div class="filtros">
+        <span class="rotulo">Comparar com</span>
+        <label>UF <select id="f-uf"><option value="">todas</option></select></label>
+        <label>Porte <select id="f-porte">
+          <option value="">todos</option>
+          <option value="ate_5k">até 5 mil hab.</option>
+          <option value="5k_20k">5 a 20 mil</option>
+          <option value="20k_100k">20 a 100 mil</option>
+          <option value="100k_mais">100 mil ou mais</option>
+        </select></label>
+      </div>
+
+      <table class="ranking" id="ranking">
+        <caption>Exposição a <span data-v="fonte-nome">previdência</span>, entre os municípios
+          filtrados. Esta tabela traz os mesmos dados do gráfico acima.</caption>
+        <thead>
+          <tr>
+            <th scope="col">Município</th>
+            <th scope="col" class="num">População</th>
+            <th scope="col" class="num">Participação</th>
+            <th scope="col" class="num">Massa no mês</th>
+            <th scope="col" class="num">Por habitante</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <p class="ranking-obs">Mostrando <span data-v="ranking-n">0</span> municípios.
+        A ordenação é decrescente pela participação.</p>
+    </section>
+
     <p class="nota-somatoria">
       As taxas por 100 adultos podem somar mais de 100. Não é erro: uma mesma pessoa pode aparecer
       em mais de uma fonte — quem recebe aposentadoria e também trabalha com carteira assinada, por
@@ -43,6 +103,8 @@
   </main>
 
 </div>
+<script src="vendor/d3.v7.min.js"></script>
 <script src="app.js"></script>
+<script src="enxame.js"></script>
 </body>
 </html>

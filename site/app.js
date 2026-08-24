@@ -92,6 +92,8 @@
 
     atual = id;
     document.title = `${mun.nome} (${mun.uf}) — Folha de Pagamento dos Municípios`;
+    // o panorama escuta isto para destacar o município e ajustar o recorte da tabela
+    document.dispatchEvent(new CustomEvent('municipio:mudou', { detail: { id } }));
   }
 
   function selecionar(id, { historico = true } = {}) {

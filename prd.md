@@ -204,7 +204,12 @@ Requisito de aceite, não item de polimento.
 - Pipeline: fontes brutas → DuckDB → Parquet → JSON pré-agregado → build.
 - D3 apenas para o beeswarm e as barras de participação. O contracheque é HTML/CSS — o que tira
   a peça mais importante do caminho crítico do aprendizado de D3.
-- Orçamento: **< 200 KB de JS** (D3 modular, não o bundle completo), first paint < 1,5 s em 4G.
+- Orçamento de JS: **< 100 KB em gzip**, que é o que trafega. Hoje: D3 v7 completo
+  (273 KB brutos / 91 KB gzip) + 17 KB de código próprio. O D3 completo foi mantido de
+  propósito enquanto o projeto é veículo de aprendizado; trocar por um bundle só com
+  `d3-selection`, `d3-scale`, `d3-axis` e `d3-transition` cortaria cerca de dois terços.
+- Sem CDN: o D3 é vendorizado em `site/vendor/`, para o repositório ser reprodutível
+  sozinho — o que também é o critério de replicabilidade do edital.
 - Mobile-first. O contracheque tem que funcionar em 360px de largura.
 - Deploy em GitHub Pages, repositório público desde o dia 1.
 

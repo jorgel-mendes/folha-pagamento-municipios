@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Folha de Pagamento dos Municípios</title>
+<meta name="description" content="De onde vem a renda registrada da população de cada um dos 5.570 municípios brasileiros: salário privado, folha pública, previdência e Bolsa Família.">
+<link rel="stylesheet" href="estilo.css">
+<script>document.documentElement.classList.add('js')</script>
+</head>
+<body data-padrao="3550308">
+<div class="envelope">
+
+  <header class="topo">
+    <h1>Folha de Pagamento dos Municípios</h1>
+    <p>De onde vem a renda registrada da população de cada cidade brasileira.</p>
+  </header>
+
+  <div class="busca js-apenas">
+    <label for="q">Buscar município</label>
+    <input id="q" type="text" role="combobox" autocomplete="off"
+           aria-autocomplete="list" aria-expanded="false" aria-controls="sugestoes"
+           placeholder="Digite o nome da cidade">
+    <ul id="sugestoes" class="sugestoes" role="listbox" aria-label="Municípios encontrados" hidden></ul>
+  </div>
+
+  <main>
+    <section class="holerite" id="holerite" data-modo="reais" aria-live="polite">
+      
+      <div class="holerite-topo">
+        <div class="holerite-titulo">
+          <p class="holerite-rotulo">Renda registrada do município</p>
+          <p class="holerite-municipio"><span data-v="municipio">São Paulo</span>
+            <span class="holerite-uf" data-v="uf">(SP)</span></p>
+          <p class="holerite-meta"><span data-v="pop">11.904.961</span> habitantes ·
+            <span data-v="pop18">9.378.193</span> com 18 anos ou mais</p>
+        </div>
+        <p class="holerite-competencia">Competência<strong data-v="competencia">dezembro de 2025</strong></p>
+      </div>
+
+      <div class="modos">
+        <span class="rotulo" id="rot-modo">Destacar</span>
+        <button type="button" data-modo="reais" aria-pressed="true" aria-describedby="rot-modo">Reais</button>
+        <button type="button" data-modo="pessoas" aria-pressed="false" aria-describedby="rot-modo">Pessoas</button>
+      </div>
+
+      <table class="linhas">
+        <caption>Cada fonte conta em uma unidade diferente, indicada na coluna Pessoas.
+          Vínculos, benefícios e famílias não são a mesma coisa e não devem ser somados.</caption>
+        <thead>
+          <tr>
+            <th scope="col">Fonte de renda</th>
+            <th scope="col" class="num">Pessoas</th>
+            <th scope="col" class="num">Por 100 adultos</th>
+            <th scope="col" class="num">Valor médio</th>
+            <th scope="col" class="num">Massa no mês</th>
+            <th scope="col" class="num">Participação</th>
+          </tr>
+        </thead>
+        <tbody><tr data-linha="salario_privado"><th scope="row"><span class="linha-nome">Salário — setor privado</span><span class="linha-fonte">RAIS 2025</span></th><td data-col="Pessoas" data-grupo="pessoas"><span class="valor" data-v="n">4.812.015</span><span class="unidade" data-v="unidade">vínculos</span></td><td data-col="Por 100 adultos" data-grupo="pessoas"><span class="valor" data-v="por100">51,3</span></td><td data-col="Valor médio" data-grupo="reais"><span class="valor" data-v="medio">R$ 5.429</span></td><td data-col="Massa no mês" data-grupo="reais"><span class="valor" data-v="massa">R$ 25,6 bi</span></td><td data-col="Participação" data-grupo="reais"><span class="barra"><i data-v="barra" style="width:73.53%"></i></span><span class="barra-pct" data-v="part">73,5%</span></td></tr><tr data-linha="salario_publico"><th scope="row"><span class="linha-nome">Salário — administração pública</span><span class="linha-fonte">RAIS 2025</span></th><td data-col="Pessoas" data-grupo="pessoas"><span class="valor" data-v="n">595.934</span><span class="unidade" data-v="unidade">vínculos</span></td><td data-col="Por 100 adultos" data-grupo="pessoas"><span class="valor" data-v="por100">6,4</span></td><td data-col="Valor médio" data-grupo="reais"><span class="valor" data-v="medio">R$ 11.170</span></td><td data-col="Massa no mês" data-grupo="reais"><span class="valor" data-v="massa">R$ 3,3 bi</span></td><td data-col="Participação" data-grupo="reais"><span class="barra"><i data-v="barra" style="width:9.43%"></i></span><span class="barra-pct" data-v="part">9,4%</span></td></tr><tr data-linha="previdencia"><th scope="row"><span class="linha-nome">Previdência — INSS e BPC</span><span class="linha-fonte">INSS</span></th><td data-col="Pessoas" data-grupo="pessoas"><span class="valor" data-v="n">2.310.025</span><span class="unidade" data-v="unidade">benefícios</span></td><td data-col="Por 100 adultos" data-grupo="pessoas"><span class="valor" data-v="por100">24,6</span></td><td data-col="Valor médio" data-grupo="reais"><span class="valor" data-v="medio">R$ 2.393</span></td><td data-col="Massa no mês" data-grupo="reais"><span class="valor" data-v="massa">R$ 5,5 bi</span></td><td data-col="Participação" data-grupo="reais"><span class="barra"><i data-v="barra" style="width:15.87%"></i></span><span class="barra-pct" data-v="part">15,9%</span></td></tr><tr data-linha="bolsa_familia"><th scope="row"><span class="linha-nome">Benefício social — Bolsa Família</span><span class="linha-fonte">Portal da Transparência</span></th><td data-col="Pessoas" data-grupo="pessoas"><span class="valor" data-v="n">610.125</span><span class="unidade" data-v="unidade">famílias</span></td><td data-col="Por 100 adultos" data-grupo="pessoas"><span class="valor" data-v="por100">6,5</span></td><td data-col="Valor médio" data-grupo="reais"><span class="valor" data-v="medio">R$ 663</span></td><td data-col="Massa no mês" data-grupo="reais"><span class="valor" data-v="massa">R$ 404,6 mi</span></td><td data-col="Participação" data-grupo="reais"><span class="barra"><i data-v="barra" style="width:1.16%"></i></span><span class="barra-pct" data-v="part">1,2%</span></td></tr></tbody>
+      </table>
+
+      <div class="total">
+        <div class="total-linha">
+          <span class="total-rotulo">Total da renda registrada</span>
+          <span class="total-valor" data-v="total">R$ 34,8 bi</span>
+        </div>
+        <p class="total-obs">Por mês, em reais correntes.
+          Equivale a <span data-v="percapita">R$ 2.925</span> por habitante. No município, <span data-v="bf-pessoas">1.586.229</span> pessoas vivem em famílias que recebem o Bolsa Família.</p>
+      </div>
+    </section>
+
+    <p class="nota-somatoria">
+      As taxas por 100 adultos podem somar mais de 100. Não é erro: uma mesma pessoa pode aparecer
+      em mais de uma fonte — quem recebe aposentadoria e também trabalha com carteira assinada, por
+      exemplo. Por isso o total acima soma apenas reais, nunca pessoas.
+    </p>
+
+    <p class="ancora">
+      Isto é a renda <strong>registrada e rastreável</strong> em dados públicos — não a renda total
+      da população. Ficam de fora trabalho informal, renda de capital, aluguel, agricultura de
+      subsistência e os regimes próprios de previdência de estados e municípios.
+    </p>
+  </main>
+
+</div>
+<script src="app.js"></script>
+</body>
+</html>

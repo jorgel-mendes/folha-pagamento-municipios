@@ -1,0 +1,14 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "site",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "/Users/macjorge/Documents/Projetos/renda_pop_municipios/site/servidor.py",
+        "8787"
+      ],
+      "port": 8787
+    }
+  ]
+}

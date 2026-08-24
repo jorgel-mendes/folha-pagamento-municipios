@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Folha de Pagamento dos Municípios</title>
+<meta name="description" content="De onde vem a renda registrada da população de cada um dos 5.570 municípios brasileiros: salário privado, folha pública, previdência e Bolsa Família.">
+<link rel="stylesheet" href="estilo.css">
+<script>document.documentElement.classList.add('js')</script>
+</head>
+<body>
+<div class="envelope">
+
+  <header class="topo">
+    <h1>Folha de Pagamento dos Municípios</h1>
+    <p>De onde vem a renda registrada da população de cada cidade brasileira.</p>
+  </header>
+
+  <div class="busca js-apenas">
+    <label for="q">Buscar município</label>
+    <input id="q" type="text" role="combobox" autocomplete="off"
+           aria-autocomplete="list" aria-expanded="false" aria-controls="sugestoes"
+           placeholder="Digite o nome da cidade">
+    <ul id="sugestoes" class="sugestoes" role="listbox" aria-label="Municípios encontrados" hidden></ul>
+  </div>
+
+  <main>
+    <section class="holerite" id="holerite" data-modo="reais" aria-live="polite">
+      <!--CONTRACHEQUE-->
+    </section>
+
+    <p class="nota-somatoria">
+      As taxas por 100 adultos podem somar mais de 100. Não é erro: uma mesma pessoa pode aparecer
+      em mais de uma fonte — quem recebe aposentadoria e também trabalha com carteira assinada, por
+      exemplo. Por isso o total acima soma apenas reais, nunca pessoas.
+    </p>
+
+    <p class="ancora">
+      Isto é a renda <strong>registrada e rastreável</strong> em dados públicos — não a renda total
+      da população. Ficam de fora trabalho informal, renda de capital, aluguel, agricultura de
+      subsistência e os regimes próprios de previdência de estados e municípios.
+    </p>
+  </main>
+
+</div>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,208 @@
+EDITAL CGU Nº 46, DE 19 DE JUNHO DE 2026 — 2º Concurso de Reúso de Dados Abertos
+Fonte: DOU Seção 3, nº 115, 23/06/2026, páginas 150-151
+https://www.in.gov.br/web/dou/-/edital-cgu-n-46-de-19-de-junho-de-2026-714061716
+Extraído do PDF oficial do DOU em 24/08/2026.
+==============================================================================
+
+EDITAL CGU Nº 46, DE 19 DE JUNHO DE 2026
+2º CONCURSO DE REÚSO DE DADOS ABERTOS DA CONTROLADORIA-GERAL DA UNIÃO
+O MINISTRO DA CONTROLADORIA-GERAL DA UNIÃO, no uso das atribuições que lhe conferem o art. 87, parágrafo único, incisos I e II, da Constituição da República e o art. 49,
+VIII, da Lei nº 14.600, de 19 de junho de 2023, torna pública a realização do 2º Concurso de Reúso de Dados Abertos da Controladoria-Geral da União, de acordo com as regras e os
+procedimentos estabelecidos no presente edital.
+1. DO OBJETO
+1.1. Realização do 2º Concurso de Reúso de Dados Abertos da Controladoria-Geral da União.
+2. DAS DISPOSIÇÕES PRELIMINARES
+2.1. O 2º Concurso de Reúso de Dados Abertos é uma iniciativa promovida pela Controladoria-Geral da União (CGU), que tem por objetivos:
+2.1.1. fortalecer a temática de dados abertos;
+2.1.2. promover o desenvolvimento de soluções baseadas em dados;
+2.1.3. identificar e disseminar soluções inovadoras com o uso de dados abertos nos setores público e privado; e
+2.1.4. incentivar o consumo de dados abertos catalogados no Portal Brasileiro de Dados Abertos.
+2.2. Para fins do presente concurso, define-se reúso de dados abertos como a utilização de dados públicos disponíveis com vistas a desenvolver produtos e/ou serviços, tais como:
+soluções, ferramentas, pesquisas, painéis, estudos, modelos de inteligência artificial, entre outros.
+3. DO PÚBLICO-ALVO
+3.1. Poderão participar do concurso pessoas físicas ou jurídicas, de direito público ou privado, nacionais ou estrangeiras, desde que atendam aos requisitos estabelecidos neste
+Ed i t a l .
+3.2. As inscrições poderão ser feitas individualmente ou por equipes executoras, com até 20 (vinte) participantes por equipe.
+3.3. Os participantes poderão compor mais de uma equipe executora.
+3.4. Não poderão participar do concurso, na condição de participante individual ou membro de equipe, servidores em exercício na Controladoria-Geral da União.
+4. DOS REQUISITOS DE ADMISSIBILIDADE
+4.1. São requisitos de admissibilidade para participação no concurso:
+4.1.1. formulário de inscrição preenchido e submetido no prazo de inscrições definido no Anexo deste edital;
+4.1.2. iniciativa cadastrada como caso de reúso no Portal Brasileiro de Dados Abertos enviada para homologação no período da inscrição;
+4.1.3. iniciativas que promovam acesso a direitos, transparência, controle social, melhoria de serviços ou políticas públicas, conhecimento ou inovação, economia digital ou
+benefícios à sociedade; e
+4.1.4. utilização e identificação de dados públicos em formato aberto.
+4.2. Não serão aceitas iniciativas que promovam preconceito, discriminação, desinformação ou que atentem contra direitos e garantias legais.
+4.3. Não serão aceitas iniciativas premiadas em qualquer uma das três primeiras colocações do Primeiro Concurso de Reúso de Dados.
+5. DAS ETAPAS
+5.1. A realização do concurso terá as seguintes etapas:
+5.1.1. inscrição das iniciativas;
+5.1.2. análise de admissibilidade;
+5.1.3. julgamento;
+5.1.4. divulgação do resultado; e
+5.1.5. premiação.
+5.2. O resultado de cada etapa do concurso será publicado em https://www.da dos.gov.br
+6. DA INSCRIÇÃO DE INICIATIVAS
+6.1. O participante ou equipe poderá indicar um trabalho por inscrição.
+6.2. O participante ou equipe deverá realizar a inscrição mediante o preenchimento do formulário eletrônico, disponibilizado em https://www.dados .gov.br
+6.3. A iniciativa deve ser cadastrada como caso de reúso no Portal Brasileiro de Dados Abertos e referenciar ao menos um conjunto de dados abertos disponível no portal
+dados.gov.br ou em sítio oficial do governo federal, devendo ainda ser submetida para homologação no prazo de inscrição.
+6.4. A inscrição deverá ser realizada pelo participante ou equipe executora da iniciativa, que será representada pelo responsável por ela escolhido, a ser identificado no formulário
+de inscrição.
+6.5. No caso da participação por equipe, o nome dos integrantes da iniciativ
+a só poderá ser alterado (inclusão, substituição ou exclusão) durante a fase de inscrição das
+iniciativas.
+6.6. Será permitido que o mesmo participante ou equipe enviem mais de uma ini ciativa, desde que sejam realizadas inscrições para cada uma delas e as reutilizações de dados
+abertos sejam suficientemente distintas.
+7. DA ANÁLISE DE ADMISSIBILIDADE
+7.1. A análise dos requisitos de admissibilidade consistirá na conferência, pela Comissão Gestora do concurso, do cumprimento dos itens obrigatório s discriminados no item 4
+deste edital.
+7.2. Iniciativa em conformidade com os requisitos de admissibilidade será considerada admitida no concurso e prosseguirá para a etapa de julgamento.
+7.3. A relação de iniciativas admitidas será publicada em https://www.dados.gov.br
+8. DO JULGAMENTO
+8.1. A etapa de julgamento consiste em avaliar os casos de reúso que atenderam aos requisitos de admissibilidade na fase de inscrição, por meio da atribuição de notas.
+8.2. As iniciativas serão distribuídas à Comissão Julgadora, que será responsável pela atribuição de notas, segundo os seguintes critérios:
+. .Critério .Peso . Descrição
+. .Apresentação e usabilidade . 1 .O reúso apresenta dados de forma que desperte o interesse do usuário e facilita a compreensão dos dados.
+. .Inovação e originalidade .1 .O reúso apresenta uso de tecnologia ou conteúdo novo ou experiência original de contato com os dados ou com a utilização destes; ou permite o
+usuário ter novas perspectivas ou obter novos conhecimentos ou entendimentos sobre os dados ou o tema abordado.
+. .Relevância e impacto . 2 .Dimensão e alcance do impacto potencialmente gerado pelo reúso.
+. .Benefício para a sociedade
+ou economia
+.2 .O reúso contribui para a melhoria de serviços ou políticas públicas, transparência, controle social, acesso a direitos, conhecimento ou inovação,
+economia digital ou para a geração benefícios à sociedade.
+. .Replicabilidade e
+escalabilidade
+.1 . A iniciativa tem potencial para ser ampliada ou replicada; a iniciativa oferece códigos abertos e licenças para replicação.
+8.3. A nota individual por critério (NC) será dada pela multiplicação do res
+pectivo peso e a média simples das notas dadas por cada membro da Comissão Julgadora, que atribuirá
+o valor de zero a dez, em números inteiros, sendo a pontuação zero devida à iniciativa que não cumpre em nada o critério e a pontuação dez àquela que cumpre totalmente o
+critério.
+8.4. A pontuação final da iniciativa será resultante da somatória da nota de cada critério NC.
+8.5. As iniciativas serão ordenadas de forma decrescente das pontuações finais, resultando na classificação preliminar, que será publicada em https://www.dados.gov.br
+8.6. Em caso de empate das pontuações finais, a melhor colocação será conferida à iniciativa com maior NC nos critérios de avaliação, na seguinte ordem:
+8.6.1. benefício para a sociedade ou economia;
+8.6.2. relevância e impacto;
+8.6.3. inovação e originalidade;
+8.3.4. apresentação e usabilidade; e
+8.6.5. replicabilidade e escalabilidade.
+8.7. Aplicados os critérios do item anterior, caso permaneça o empate, a dat
+a de inscrição da iniciativa no concurso será adotada como critério final de desempate, sendo a
+melhor colocação conferida à iniciativa com data de inscrição mais antiga.
+8.8. O resultado da etapa do processo de avaliação dos reúsos de dados abertos será publicado em https://www.dados.gov.br.
+9. DA COMISSÃO JULGADORA
+9.1. Cabe à Controladoria-Geral da União (CGU), por meio da Comissão Julgadora, proceder ao julgamento das iniciativas de reutilização de dados abert os inscritas e
+admitidas.
+9.2. A Comissão Julgadora será composta por, no mínimo, três membros, indicados pela Controladoria-Geral da União (CGU), que serão designados em ato específico da Secretaria
+Nacional de Transparência e Acesso à Informação da Controladoria-Geral da União (SNAI/CGU).
+9.3. A Comissão Julgadora é soberana para eleger, dentre as iniciativas inscritas e admitidas, as mais bem colocadas, respeitando-se os critérios de cada etapa do concurso.
+9.4. Caberá a cada membro da Comissão Julgadora atribuir notas às iniciativas, nos termos do item 8.
+9.5. Compete à Comissão Julgadora deliberar sobre eventuais recursos relativos à etapa de julgamento e divulgação do resultado.
+10. DA DIVULGAÇÃO DO RESULTADO
+10.1. Realizado o julgamento das iniciativas, será publicada a classificação final, conforme os critérios estabelecidos no item 8 deste edital.
+10.2. A partir da classificação final, estarão em destaque as três mais bem colocadas, as quais serão premiadas, podendo ser concedidas menções honrosas a iniciativas que se
+destaquem em um ou mais dos critérios de julgamento.
+10.3. A lista com as iniciativas de reutilização de dados abertos vencedoras será publicada em https://www.dados.gov.br
+10.4. Após a publicação do resultado, o concurso realizará a premiação.
+11. DA PREMIAÇÃO
+11.1. Serão premiadas as três iniciativas mais bem colocadas. As iniciativas vencedoras receberão:
+11.1.1. certificados individuais de premiação destinados aos integrantes da equipe executora e, sob demanda, aos parceiros; e
+11.1.2. direito ao uso de selo Vencedor no Segundo Concurso de Reúso de Dados Abertos nos materiais de divulgação impressa ou eletrônica das iniciativas premiadas.
+11.2. Divulgação das iniciativas no Portal Brasileiro de Dados Abertos.
+11.3. Além dos prêmios referidos no subitem 11.1 o indivíduo ou os membros da equipe executora das iniciativas vencedoras (listados no formulário de submissão) poderá(ão)
+ser convidado(s), num período de até 01 (um) ano após a premiação, a participar de cursos, eventos e/ou missões técnicas organizadas ou viabilizadas pela Controladoria-Geral da União
+(CGU) e eventuais parceiros com o objetivo de valorizar, incentivar e disseminar o reúso de dados abertos no Brasil.
+11.4. As iniciativas vencedoras poderão fazer uso do resultado alcançado n o concurso para fins de promoção e divulgação de seus trabalhos.
+11.5. Os reconhecimentos serão entregues em cerimônia de premiação, a ser realizada em data, local e horário a serem divulgados pelo Comitê Gestor do concurso.
+11.6. As informações de realização da cerimônia de premiação serão disponibilizadas em https://www.dados.gov.br
+11.7. A Controladoria-Geral da União (CGU) poderá alterar, a seu critério, a premiação estipulada, desde que a nova premiação seja de valor compatível ou superior à
+anteriormente prevista.
+12. DO COMITÊ GESTOR DO CONCURSO
+12.1. O presente concurso será coordenado por Comitê Gestor instituído por ato da Secretaria Nacional de Transparência e Acesso à Informação da Contro ladoria-Geral da União
+( S N A I / CG U ) .
+12.2. O Comitê Gestor será composto por 3 (três) servidores públicos, incluindo o Presidente do Comitê.
+12.3. Caberá ao Comitê Gestor:
+12.3.1. responder pela organização do concurso e suas etapas;
+12.3.2. responder questionamentos e dirimir dúvidas;
+12.3.3. encaminhar eventuais recursos referentes às etapas de julgamento e divulgação do resultado para a Comissão Julgadora e deliberar sobre os demais;
+12.3.4. deliberar sobre casos omissos ou não previstos neste edital, bem co
+mo sobre eventos que caracterizem caso fortuito ou força maior; e
+12.3.5. realizar diligências, quando necessário, para averiguar a veracidade e a consistência das informações apresentadas pelas equipes executoras de iniciativas durante a
+realização do concurso.
+12.4. Caberá ao Presidente do Comitê Gestor:
+12.4.1. conduzir os trabalhos do Comitê;
+12.4.2. decidir de maneira definitiva acerca dos casos omissos ou não previstos neste edital, nas situações em que não houver consenso entre os membros do Comitê.
+13. DO PEDIDO DE RECONSIDERAÇÃO
+13.1. O participante ou equipe que desejar apresentar pedido de reconsideração ao resultado de uma das etapas do concurso, descritas no item 5 deste edital, disporá de 5
+(cinco) dias para fazê-lo, a contar do dia subsequente ao da divulgação do resultado de cada etapa e deverá dirigi-lo ao Comitê Gestor.
+13.2. No caso de indeferimento do pedido de reconsideração, poderá ser apresentado recurso, dentro de 5 (cinco) dias, à Diretoria de Governo Aberto e Transparência.
+13.3. Os pedidos de reconsideração e recursos devem ser encaminhados para dadosabertos@cgu.gov.br
+13.4. O participante ou equipe deverá redigir seu pedido de reconsideração e eventual recurso de forma clara, consistente e objetiva, indicando especificamente o objeto de sua
+irresignação.
+13.5. A interposição de pedido de reconsideração e recurso deverá ser apres
+entada pelo responsável da equipe, conforme a composição registrada na etapa de inscrição.
+13.6. O pedido de reconsideração e recurso intempestivos ou apresentados p or pessoa diversa do responsável da equipe não serão conhecidos.
+13.7. Não cabe pedido de reconsideração contra os critérios de avaliação de iniciativas descritos no item 8.2 do Edital.
+14. DA PROTEÇÃO DE DADOS PESSOAIS
+14.1. O tratamento dos dados pessoais dos participantes observará as disposições da Lei nº 13.709, de 14 de agosto de 2018 - Lei Geral de Proteção de Dados Pessoais (LGPD),
+bem como as demais normas aplicáveis à Administração Pública Federal.
+14.2. Os dados pessoais fornecidos pelos participantes serão coletados e tratados exclusivamente para finalidades legítimas, específicas e relacionadas à realização do concurso,
+observados os princípios da finalidade, adequação, necessidade, transparência, segurança e responsabilização previstos na LGPD.
+14.3. Constituem finalidades do tratamento dos dados pessoais no âmbito deste concurso:
+I. efetivar as inscrições e identificar os participantes;
+II. verificar o atendimento aos requisitos de participação previstos neste regulamento;
+III. analisar, avaliar e classificar os trabalhos, projetos ou propostas s
+ubmetidas;
+IV. comunicar atos, resultados, convocações e demais informações relacionadas ao concurso;
+V. divulgar os resultados do certame e a identificação dos participantes classificados ou premiados, quando necessário ao atendimento dos princípios da publicidade e da
+transparência administrativa;
+VI. cumprir obrigações legais, regulatórias e de prestação de contas perante órgãos de controle e fiscalização; e
+VII. preservar a memória institucional e constituir registros administrativos relacionados à execução do concurso.
+14.4. O tratamento dos dados pessoais será realizado com fundamento no cumprimento de obrigação legal ou regulatória, na execução de políticas públicas previstas em leis e
+regulamentos ou respaldadas em contratos, convênios ou instrumentos congêneres, bem como no exercício das competências legais da Administração Pública, nos termos dos arts. 7º, inciso
+III, e 23 da LGPD.
+14.5. Os dados pessoais não serão utilizados para finalidades incompatíveis com aquelas previstas neste regulamento, nem serão compartilhados com terceiros sem fundamento
+legal ou sem observância das hipóteses autorizadas pela legislação vigente.
+14.6. Os dados serão mantidos pelo período necessário ao cumprimento das finalidades que justificaram sua coleta e das obrigações legais e administrativas aplicáveis, observadas
+as normas de gestão documental e arquivística da Administração Pública.
+14.7. Os participantes poderão exercer os direitos previstos na LGPD perante a Controladoria-Geral da União (CGU), ressalvadas as hipóteses legais de restrição e as limitações
+decorrentes da natureza pública dos atos administrativos e dos deveres de transparência da Administração Pública.
+14.8. A participação no concurso implica ciência de que a imagem, a voz, o nome e demais elementos de identificação dos participantes classificados, finalistas ou premiados
+poderão ser captados, reproduzidos, divulgados e utilizados pelo órgão promotor, sem ônus, para fins institucionais, educacionais, informativos, de transparência pública, prestação de contas
+e divulgação das ações relacionadas ao concurso e às políticas públicas por ele promovidas.
+14.9.O tratamento dos dados pessoais relativos à imagem e à voz observará os princípios e disposições da Lei nº 13.709, de 14 de agosto de 2018 - Lei Geral de Proteção de
+Dados Pessoais (LGPD), sendo limitado às finalidades previstas neste regulamento e às competências legais do órgão promotor.
+14.10. A utilização da imagem, da voz, do nome e das informações relacionadas à participação no concurso não poderá ocorrer para fins comerciais ou para finalidades
+incompatíveis com o interesse público que fundamenta a realização do certa
+me, ressalvadas as hipóteses previstas em lei.
+15. DO CRONOGRAMA
+15.1. O cronograma com os prazos de cada etapa encontra-se no Anexo.
+16. DAS DISPOSIÇÕES FINAIS
+16.1. A inscrição de iniciativa no concurso implica, para todos os participantes individuais e membros da equipe, responsável institucional e superior do responsável, a automática
+concordância com as regras previstas neste edital.
+16.2. Os resultados e comunicados deste concurso serão publicados em https://www.dados.gov.br
+16.3. Demais questões relativas à propriedade intelectual serão regidas p
+ela legislação vigente no país, dentre elas, a Lei de Inovação nº 10.973, de 02 de dezembro de 2004,
+a Lei de Propriedade Industrial nº 9.279, de 14 de maio de 1996, a Lei de Direitos Autorais nº 9.610, de 19 de fevereiro de 1998, e a Lei de Programa de Computador nº 9.609, de 19 de
+fevereiro de 1998, e suas respectivas alterações. 16.4. Serão desclassificados, a qualquer tempo, os trabalhos que não se enquadrarem no tema ou nas especificações deste edital, bem como
+aqueles decorrentes de plágio ou fraude, e ainda os enviados em desconformi
+dade com os dados de inscrição.
+16.4. Durante a realização deste concurso, a Controladoria-Geral da União (CGU), por meio do Comitê Gestor de que trata o item 12 deste edital, reserva-se o direito de averiguar
+a veracidade e a consistência das informações apresentadas, podendo solicitar dados complementares e documentação comprobatória à equipe executor a da iniciativa.
+16.5. Estão impedidos de participar do concurso os membros de Comissão Julg adora, os membros do Comitê Gestor, bem como seus parentes em linha reta, colateral ou afim,
+até o terceiro grau em quaisquer das etapas deste concurso.
+16.6. Os pedidos de esclarecimentos referentes a este concurso deverão ser enviados ao Comitê Gestor, de que trata o item 12 deste edital, exclusivamente pelo endereço
+eletrônico dadosabertos@cgu.gov.br
+VINICIUS MARQUES DE CARVALHO
+Ministro de Estado da Controladoria-Geral da União
+ANEXO I - CRONOGRAMA DE ATIVIDADES.
+. .At i v i d a d e .Data
+. .Início do período de inscrição das iniciativas . 29/06/2026
+. .Encerramento do período de inscrição das iniciativas .11/09/2026
+. .Resultado preliminar da análise de admissibilidade .25/09/2026
+. .Pedido de Reconsideração/Recurso da etapa de admissibilidade .De 28/09/2026 a 02/10/2026
+. .Resultado final das iniciativas admitidas . 12/10/2026
+. .Resultado preliminar do julgamento de iniciativas .13/11/2026
+. .Pedido de Reconsideração/Recurso da etapa de julgamento das iniciativas .De 16/11/2026 a 20/11/2026
+. .Divulgação do resultado final .09/12/2026
+. .Premiação do concurso .Até 30/03/2027

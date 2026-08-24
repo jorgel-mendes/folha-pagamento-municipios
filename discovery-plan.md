@@ -29,31 +29,64 @@ a mudanças de regra em cada uma dessas fontes?
 | **Resultado final** | 09/12/2026 |
 | Entrega da premiação | até 30/03/2027 |
 
-### Critérios de julgamento — 11 pontos
+### Critérios de julgamento — texto do edital, item 8.2
 
-| Critério | Peso | Como a entrega endereça |
-|---|---|---|
-| Apresentação | 2 | Página única, metáfora do contracheque, mobile-first |
-| Inovação | 2 | Harmonização inédita de 4 linhas de renda + metáfora do holerite municipal |
-| Transparência e controle social | 2 | Repositório aberto, pipeline reprodutível, dataset harmonizado publicado |
-| Foco nas pessoas e impacto social | 2 | Unidade "pessoas" tratada em pé de igualdade com "reais" |
-| Uso de 2+ fontes de dados abertos | 1 | 3 fontes (RAIS/eSocial, INSS, Bolsa Família/CadÚnico) |
-| Ferramentas tecnológicas | 1 | D3, DuckDB/Parquet, site estático |
-| Inclusividade | 1 | WCAG AA, teclado, alternativa tabular, leitor de tela |
+Nota de 0 a 10 por critério, multiplicada pelo peso. **Máximo 70 pontos.**
 
-**Leitura estratégica:** 8 dos 11 pontos são narrativos/de apresentação. O rigor de pipeline e a
-nota técnica cobrem no máximo 3 pontos diretos. A comunicação é o fator dominante.
+| Critério | Peso | Máx | Como a entrega endereça |
+|---|---|---|---|
+| Relevância e impacto | 2 | 20 | 5.570 municípios, cobertura nacional, dois usos nomeados |
+| Benefício para a sociedade ou economia | 2 | 20 | subsídio a desenho de política e a gestão municipal |
+| Apresentação e usabilidade | 1 | 10 | contracheque, página única, mobile-first |
+| Inovação e originalidade | 1 | 10 | harmonização inédita de 4 linhas + metáfora do holerite |
+| Replicabilidade e escalabilidade | 1 | 10 | **repositório público com licença** + dataset harmonizado |
 
-### Requisitos de admissibilidade (eliminatórios)
+Desempate (item 8.6), nesta ordem: benefício → relevância → inovação → apresentação →
+replicabilidade. Não cabe recurso contra os próprios critérios (item 13.7).
 
-- Preencher o formulário de informações do projeto.
-- Cadastrar a iniciativa como **caso de reúso no dados.gov.br**, referenciando ao menos um
-  conjunto catalogado lá, e submeter para homologação **dentro do prazo de inscrição**.
-- Grupo de até 20 pessoas — 2 está OK.
+> **Correção importante.** A página-resumo da CGU lista critérios diferentes destes —
+> apresentação 2, inovação 2, transparência 2, foco nas pessoas 2, uso de 2+ fontes 1,
+> ferramentas tecnológicas 1, inclusividade 1. **Esses não são os critérios do edital.**
+> O que vale é o item 8.2 acima. Consequências: "inclusividade" e "uso de 2+ fontes" não
+> são critérios próprios, e "replicabilidade" — que ninguém tinha na conta — vale 10 pontos
+> e depende de código aberto e licença.
 
-> A homologação do caso de reúso tem fila. Fazer o cadastro na semana 3, não em 11/09.
+**Leitura estratégica:** relevância e benefício somam **40 dos 70 pontos (57%)**. São critérios
+de alcance e de utilidade pública, não de estética. A apresentação vale 10. Isso reordena o
+esforço: a narrativa de impacto e a abertura do código pesam mais que o refinamento visual.
 
----
+### Requisitos de admissibilidade (item 4 do edital, eliminatórios)
+
+1. Formulário de inscrição preenchido e submetido no prazo.
+2. Iniciativa cadastrada como caso de reúso no dados.gov.br e **enviada para homologação**
+   dentro do período de inscrição (item 6.3).
+3. A iniciativa deve promover "acesso a direitos, transparência, controle social, melhoria de
+   serviços ou políticas públicas, conhecimento ou inovação, economia digital ou benefícios à
+   sociedade" (item 4.1.3).
+4. Utilização e identificação de dados públicos em formato aberto (item 4.1.4).
+5. Referenciar ao menos um conjunto do dados.gov.br **ou de sítio oficial do governo federal**.
+
+**Vedações e desclassificação**
+
+- Servidores em exercício na CGU não podem participar (item 3.4); membros das comissões e
+  parentes até terceiro grau também (16.5).
+- Não são aceitas iniciativas que promovam "preconceito, discriminação, desinformação" (4.2).
+- Desclassificação a qualquer tempo por plágio, fraude ou desconformidade com a inscrição (16.4).
+- Um trabalho por inscrição (6.1); mais de uma inscrição é permitida se os reúsos forem
+  suficientemente distintos (6.6).
+
+**A6 resolvida.** O edital **não restringe temas** — os "25 temas" que aparecem na página-resumo
+da CGU não constam do texto legal. O item 4.1.3 é qualitativo e amplo, e a entrega se encaixa
+diretamente em transparência, controle social e melhoria de políticas públicas.
+
+**Propriedade intelectual (16.3):** regida pela legislação comum. O edital **não transfere
+direitos** à CGU. Publicar o código com licença aberta é escolha nossa — e pontua em
+replicabilidade.
+
+**Premiação (item 11):** certificados, selo de vencedor, divulgação no portal e possível convite
+a cursos, eventos e missões técnicas em até um ano. Não há prêmio em dinheiro.
+
+> A homologação do caso de reúso tem fila. Fazer o cadastro agora, não em 11/09.
 
 ## 2. Usuários-alvo
 
@@ -122,7 +155,7 @@ lado a lado, Sankey, série histórica.
 | A3 | Ranking simétrico resiste a leitura política adversa | Viabilidade | Alto | Média | P0 — testar em E5 |
 | A4 | A metáfora do contracheque é compreendida por leigos | Valor | Alto | Média | P1 — testar em E4 |
 | A5 | Municípios pequenos têm cobertura (sem supressão por sigilo) | Viab. técnica | Médio | Alta | P1 — testar em E1 |
-| A6 | O tema se encaixa nos 25 temas elegíveis do edital | Admissibilidade | Alto | Baixa | P1 — ler o edital |
+| A6 | A iniciativa se enquadra no objeto do edital | Admissibilidade | Alto | — | **RESOLVIDA** ✅ item 4.1.3 |
 | A7 | A página atinge WCAG AA com D3 | Usabilidade | Médio | Média | P2 — testar em E6 |
 | A8 | Jorge aprende D3 o suficiente para o beeswarm no prazo | Viab. técnica | Médio | Média | P2 — testar em E7 |
 | A9 | RAIS permite separar esfera municipal por natureza jurídica | Viab. técnica | Médio | Baixa | P1 — testar em E1 |

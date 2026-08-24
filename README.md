@@ -14,6 +14,7 @@ Inscrição no **2º Concurso de Reúso de Dados Abertos da CGU** (Edital CGU n�
 
 | Arquivo | O quê |
 |---|---|
+| [referencias/edital-cgu-46-2026.txt](referencias/edital-cgu-46-2026.txt) | Texto integral do edital, extraído do PDF do DOU |
 | [discovery-plan.md](discovery-plan.md) | Plano de discovery: ideias, assunções, experimentos, cronograma |
 | [e1-resultados.md](e1-resultados.md) | Resultados do spike de dados — o que existe, o que não existe, o que quebra |
 | [prd.md](prd.md) | Especificação da página: blocos, campos, contrato JSON, acessibilidade |

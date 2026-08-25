@@ -269,7 +269,7 @@ tr[data-linha="bolsa_familia"]   { --cor: var(--c-bf); }
 
 .no { stroke: var(--papel); stroke-width: 0.4; }
 .no.apagado { opacity: 0.12; }
-.no.alvo { stroke: var(--destaque); stroke-width: 2.2; paint-order: stroke; }
+.no.alvo { stroke: var(--destaque); stroke-width: 2.4; paint-order: stroke; }
 .eixo path, .eixo line { stroke: var(--linha); }
 .eixo text { fill: var(--tinta-fraca); font-family: var(--fonte-texto); font-size: 11px; }
 .rotulo-alvo { fill: var(--tinta); font-size: 12px; font-weight: 700; paint-order: stroke; stroke: var(--papel); stroke-width: 3.5; }
@@ -304,9 +304,9 @@ tr[data-linha="bolsa_familia"]   { --cor: var(--c-bf); }
 }
 
 /* ================================================================ palco do gráfico */
-:root { --neutro: #9aa3ad; --alvo-cor: #1b1c1e; }
+:root { --neutro: #737d88; --alvo-cor: #121315; }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-tema="claro"]) { --neutro: #4d545c; --alvo-cor: #ffffff; }
+  :root:not([data-tema="claro"]) { --neutro: #99a3ae; --alvo-cor: #ffffff; }
 }
 
 .palco { position: relative; }

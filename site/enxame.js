@@ -27,7 +27,9 @@
   const PALETA = ['#3b7dd8', '#d2691e', '#2e9e83', '#a862c4', '#c1443e',
                   '#5a8f2f', '#c9992a', '#4aa5c4', '#b5567f'];
   const MARGEM = { topo: 10, dir: 12, baixo: 30, esq: 12 };
-  const PAD = 0.6;            // folga entre círculos, em px
+  // Geometria do enxame em unidades relativas a uma largura de referência, como no
+  // pré-cálculo original. Mantém a mesma proporção de ponto e folga em qualquer tela.
+  const REF = 1400, R_MIN = 1.1, R_MAX = 6.0, FOLGA = 0.15;
   const MAX_LINHAS = 50;
 
   let dados = null, indice = null, lista = null;
@@ -80,9 +82,10 @@
     return null;
   }
   function corDe(m) {
+    if (!visivel(m)) return 'var(--neutro)';
     if (escopo === 'estado') return m.id === alvo ? 'var(--alvo-cor)' : 'var(--neutro)';
     if (escopo === 'todos') return `var(--r-${m.regiao})`;
-    return escalaUF ? escalaUF(m.uf) : 'var(--neutro)';
+    return escalaUF && escalaUF.domain().includes(m.uf) ? escalaUF(m.uf) : 'var(--neutro)';
   }
 
   function grupos() {
@@ -101,7 +104,7 @@
   // Dodge com raio variável: percorre em ordem de x e coloca cada círculo no menor |y| que
   // não colide. A lista encadeada descarta o que já ficou longe demais à esquerda, o que
   // mantém o custo próximo de linear.
-  function empacotar(itens) {
+  function empacotar(itens, folga) {
     const eps = 1e-3;
     const rMax = d3.max(itens, (d) => d.r) || 1;
     let cabeca = null, cauda = null;
@@ -109,7 +112,7 @@
     const bate = (x, y, r) => {
       let a = cabeca;
       while (a) {
-        const dr = r + a.r + PAD;
+        const dr = r + a.r + folga;
         if (dr * dr - eps > (a.x - x) ** 2 + (a.y - y) ** 2) return true;
         a = a.next;
       }
@@ -118,13 +121,18 @@
 
     itens.sort((a, b) => a.x - b.x);
     for (const b of itens) {
-      while (cabeca && cabeca.x < b.x - 2 * rMax - PAD) cabeca = cabeca.next;
+      while (cabeca && cabeca.x < b.x - 2 * rMax - folga) cabeca = cabeca.next;
+      // Se a poda esvaziou a lista, a cauda precisa cair junto. Sem isto, o próximo
+      // encadeamento parte de uma cauda órfã, `cabeca` fica nulo para sempre e nenhuma
+      // colisão é mais detectada — todos os pontos depois do primeiro vão no eixo x
+      // acabam empilhados em y = 0, e o enxame vira uma linha reta.
+      if (!cabeca) cauda = null;
       if (bate(b.x, 0, b.r)) {
         // candidatos: alturas em que b encosta em algum círculo já posicionado, nos dois
         // sentidos — subir e descer — para o enxame crescer simétrico em torno do eixo
         let melhor = Infinity;
         for (let a = cabeca; a; a = a.next) {
-          const dr = b.r + a.r + PAD;
+          const dr = b.r + a.r + folga;
           const dx = a.x - b.x;
           const base = dr * dr - dx * dx;
           if (base <= 0) continue;
@@ -151,29 +159,24 @@
     const largura = figura.clientWidth || 900;
     const x = d3.scaleLinear().domain([0, 1]).range([MARGEM.esq, largura - MARGEM.dir]);
 
-    const alvos = lista.filter((m) => visivel(m) && dados[m.id] && dados[m.id].linhas[fonte]);
-    // raio pela população, em escala de raiz — área proporcional ao número de habitantes.
-    // Com menos municípios em cena sobra espaço, então os pontos podem crescer.
-    // O piso do raio define a altura do enxame: pontos muito pequenos empacotam numa
-    // linha fina e a distribuição some. O teto é contido para uma capital não achatar
-    // o resto — a leitura que importa é a forma da distribuição, não o tamanho de uma cidade.
-    // O piso do raio define a altura do enxame: pontos muito pequenos empacotam numa linha
-    // fina e a distribuição some. Como a densidade varia muito entre escopos (um estado tem
-    // dezenas, o país tem milhares), o piso acompanha a contagem em vez de ser fixo.
-    const n = alvos.length;
-    const piso = n > 3000 ? 2.2 : n > 1200 ? 3 : n > 400 ? 3.6 : 4.4;
-    const teto = Math.max(piso + 2, n > 3000 ? 7 : n > 1200 ? 10 : 13);
-    const f = ampliado ? 1.35 : 1;
-    const rEscala = d3.scaleSqrt()
-      .domain([0, d3.max(alvos, (m) => m.pop) || 1])
-      .range([piso * f, teto * f]);
+    // O enxame desenha SEMPRE todos os municípios. O escopo apaga os de fora, não os
+    // remove: é esse pano de fundo que dá corpo à distribuição, e manter todo mundo em
+    // cena deixa o desenho estável — os pontos não saltam ao trocar de recorte.
+    const todos = lista.filter((m) => dados[m.id] && dados[m.id].linhas[fonte]);
 
-    const itens = alvos.map((m) => ({
+    // Geometria em unidades relativas a REF, escaladas para a largura real: a proporção
+    // entre ponto, folga e plano fica igual em qualquer tela, e ampliar aumenta tudo junto.
+    const escala = (largura - MARGEM.esq - MARGEM.dir) / REF;
+    const rEscala = d3.scaleSqrt()
+      .domain([0, d3.max(todos, (m) => m.pop) || 1])
+      .range([R_MIN * escala, R_MAX * escala]);
+
+    const itens = todos.map((m) => ({
       id: m.id, m,
       x: x(dados[m.id].linhas[fonte].part),
-      r: Math.max(piso * f, rEscala(m.pop)),
+      r: Math.max(R_MIN * escala, rEscala(m.pop)),
     }));
-    empacotar(itens);
+    empacotar(itens, FOLGA * escala);
 
     const extremo = d3.max(itens, (d) => Math.abs(d.y) + d.r) || 10;
     const altura = extremo * 2 + MARGEM.topo + MARGEM.baixo + 6;
@@ -190,7 +193,7 @@
           .attr('cx', (d) => d.x).attr('cy', (d) => meio + d.y).attr('r', (d) => d.r)),
       )
       .attr('fill', (d) => corDe(d.m))
-      .classed('apagado', (d) => foco !== null && chaveCor(d.m) !== foco)
+      .classed('apagado', (d) => !visivel(d.m) || (foco !== null && chaveCor(d.m) !== foco))
       .classed('alvo', (d) => d.id === alvo);
 
     gEixo.attr('transform', `translate(0,${altura - MARGEM.baixo + 8})`)
@@ -214,7 +217,8 @@
 
   // Texto equivalente para leitor de tela: sem isto o gráfico é decorativo.
   function descrever(itens) {
-    const vals = itens.map((d) => dados[d.id].linhas[fonte].part).sort(d3.ascending);
+    const vals = itens.filter((d) => visivel(d.m))
+      .map((d) => dados[d.id].linhas[fonte].part).sort(d3.ascending);
     if (!vals.length) return;
     const a = indice.get(alvo);
     const p = dados[alvo] && dados[alvo].linhas[fonte];

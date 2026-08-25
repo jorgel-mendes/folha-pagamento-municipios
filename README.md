@@ -97,3 +97,12 @@ Detalhes, parâmetros e custo de disco em [pipeline/README.md](pipeline/README.m
 
 Jorge — engenharia de dados, pipeline e visualização.
 Irmão — economia, metodologia e nota técnica.
+
+## Licença
+
+O código deste repositório está sob **[licença MIT](LICENSE)** — pode ser usado, modificado
+e redistribuído livremente, inclusive comercialmente, mantendo o aviso de copyright.
+
+Os dados de origem são públicos e vêm de RAIS/PDET, INSS, Portal da Transparência, MDS/SAGI
+e IBGE/DATASUS. O painel harmonizado que o pipeline produz é obra derivada dessas fontes;
+cada uma mantém os próprios termos de uso, indicados em `dados/gold/*/dicionario.md`.

@@ -32,12 +32,35 @@
   const REF = 1400, R_MIN = 1.1, R_MAX = 6.0, FOLGA = 0.15;
   const MAX_LINHAS = 50;
 
+  // Plano de composição: um quadrante por fonte, em ordem circular.
+  //
+  // A primeira versão usava radviz — média das quatro âncoras pesada pelas participações.
+  // Estava errada para o que o gráfico promete: ali a posição mede o equilíbrio entre
+  // PARES de fontes, não qual é a maior. Goiânia é o contraexemplo: folha pública 44,0%
+  // contra salário privado 42,5%, e mesmo assim caía no quadrante do privado, porque
+  // (privado + previdência) supera (pública + Bolsa Família) por 0,097.
+  //
+  // Agora o quadrante é a fonte dominante por construção. Dentro dele, a distância até o
+  // centro é o quanto essa fonte domina, e o ângulo diz qual das duas fontes vizinhas vem
+  // em segundo. Nada de posição sem significado.
+  const ANCORAS = [
+    { chave: 'previdencia',     ang: 45,  curto: 'Previdência' },
+    { chave: 'salario_privado', ang: 135, curto: 'Salário privado' },
+    { chave: 'salario_publico', ang: 225, curto: 'Folha pública' },
+    { chave: 'bolsa_familia',   ang: 315, curto: 'Bolsa Família' },
+  ];
+  const COR_FONTE = {
+    salario_privado: 'var(--c-privado)', salario_publico: 'var(--c-publico)',
+    previdencia: 'var(--c-prev)', bolsa_familia: 'var(--c-bf)',
+  };
+
   let dados = null, indice = null, lista = null;
+  let vista = 'enxame';       // enxame | plano
   let fonte = 'previdencia';
   let alvo = document.body.dataset.padrao;
   let escopo = 'estado';
   let porte = '';
-  let foco = null;            // grupo destacado pela legenda (região ou UF)
+  let foco = null;            // grupo destacado pela legenda (região, UF ou fonte dominante)
   let ampliado = false;
 
   const svg = d3.select(svgEl);
@@ -75,20 +98,39 @@
   // A cor muda com o escopo: no país inteiro o padrão que importa é regional; dentro de uma
   // região, é a diferença entre estados; dentro de um estado, nenhuma cor agrega — só o
   // município escolhido precisa se destacar.
+  // A fonte com maior participação no município. É o que o plano colore, porque ali a
+  // pergunta deixa de ser "quanto de uma fonte" e passa a ser "qual delas manda".
+  function dominante(m) {
+    const l = (dados[m.id] || {}).linhas || {};
+    let melhor = null, maior = -1;
+    for (const { chave } of ANCORAS) {
+      const p = (l[chave] || {}).part || 0;
+      if (p > maior) { maior = p; melhor = chave; }
+    }
+    return melhor;
+  }
+
   let escalaUF = null;
   function chaveCor(m) {
+    if (vista === 'mapa') return dominante(m);
     if (escopo === 'todos') return m.regiao;
     if (escopo === 'regiao') return m.uf;
     return null;
   }
   function corDe(m) {
     if (!visivel(m)) return 'var(--neutro)';
+    if (vista === 'mapa') return COR_FONTE[dominante(m)] || 'var(--neutro)';
     if (escopo === 'estado') return m.id === alvo ? 'var(--alvo-cor)' : 'var(--neutro)';
     if (escopo === 'todos') return `var(--r-${m.regiao})`;
     return escalaUF && escalaUF.domain().includes(m.uf) ? escalaUF(m.uf) : 'var(--neutro)';
   }
 
   function grupos() {
+    if (vista === 'mapa') {
+      const presentes = new Set(lista.filter(visivel).map(dominante));
+      return ANCORAS.filter((a) => presentes.has(a.chave))
+        .map((a) => ({ chave: a.chave, nome: a.curto, cor: COR_FONTE[a.chave] }));
+    }
     if (escopo === 'estado') return [];
     const chaves = [...new Set(lista.filter(visivel).map(chaveCor))].sort();
     if (escopo === 'todos') {
@@ -154,6 +196,185 @@
 
   // ---------------------------------------------------------------- desenho
   function desenhar() {
+    if (vista === 'plano') return desenharPlano();
+    if (vista === 'mapa') return desenharMapa();
+    return desenharEnxame();
+  }
+
+  // ---------------------------------------------------------------- mapa
+  // A malha municipal tem 269 KB em gzip e só serve a esta vista, então é buscada na
+  // primeira vez que o mapa abre -- quem nunca clica em "Mapa" não paga por ela.
+  let malha = null, carregandoMalha = false;
+
+  // O d3-geo lê a orientação do anel para saber onde fica o interior do polígono. Anel na
+  // direção errada vira o complemento: um município sozinho cobre o planeta e pinta a tela
+  // inteira. A simplificação da malha inverte alguns polígonos pequenos, e não dá para
+  // corrigir na geração — a montagem da topologia reescreve a orientação para compartilhar
+  // arcos entre vizinhos. Então quem julga é o próprio d3: nenhum município brasileiro
+  // chega perto de 0,01 esferorradiano (o maior, Altamira, tem 0,004), então área acima
+  // disso só pode ser polígono invertido.
+  function endireitar(feições) {
+    let corrigidos = 0;
+    for (const f of feições) {
+      if (d3.geoArea(f) < 0.01) continue;
+      const g = f.geometry;
+      const pols = g.type === 'MultiPolygon' ? g.coordinates : [g.coordinates];
+      for (const pol of pols) pol[0].reverse();
+      corrigidos++;
+    }
+    if (corrigidos) console.info(`malha: ${corrigidos} municípios com anel invertido, corrigidos`);
+  }
+
+  function desenharMapa() {
+    if (!malha) {
+      if (!carregandoMalha) {
+        carregandoMalha = true;
+        document.getElementById('enxame-desc').textContent = 'Carregando a malha municipal…';
+        const v = document.body.dataset.versao ? `?v=${document.body.dataset.versao}` : '';
+        fetch(`malha.topojson${v}`).then((r) => r.json()).then((t) => {
+          const chave = Object.keys(t.objects)[0];
+          malha = topojson.feature(t, t.objects[chave]).features;
+          endireitar(malha);
+          carregandoMalha = false;
+          if (vista === 'mapa') desenharMapa();
+        }).catch(() => {
+          carregandoMalha = false;
+          document.getElementById('enxame-desc').textContent =
+            'Não foi possível carregar a malha municipal.';
+        });
+      }
+      return;
+    }
+
+    const largura = figura.clientWidth || 900;
+    const altura = Math.min(largura * 0.78, ampliado ? 680 : 500);
+
+    // No mapa o recorte é o próprio enquadramento: mostrar só quem está no escopo e
+    // ajustar a projeção a ele é o que produz o zoom esperado ao trocar de estado.
+    const dentro = new Set(lista.filter(visivel).map((m) => m.id));
+    const feições = malha.filter((f) => dentro.has(f.properties.id));
+    if (!feições.length) return;
+
+    const colecao = { type: 'FeatureCollection', features: feições };
+    const projecao = d3.geoMercator().fitSize([largura - 8, altura - 8], colecao);
+    const caminho = d3.geoPath(projecao);
+
+    svg.attr('viewBox', `0 0 ${largura} ${altura}`).attr('width', largura).attr('height', altura);
+    gEixo.attr('transform', null).selectAll('*').remove();
+    gAlvo.selectAll('*').remove();
+
+    gNos.selectAll('path')
+      .data(feições, (f) => f.properties.id)
+      .join('path')
+      .attr('class', 'area')
+      .attr('d', caminho)
+      .attr('transform', 'translate(4,4)')
+      .attr('fill', (f) => {
+        const m = indice.get(f.properties.id);
+        return m ? corDe(m) : 'var(--neutro)';
+      })
+      .classed('apagado', (f) => {
+        const m = indice.get(f.properties.id);
+        return !m || (foco !== null && chaveCor(m) !== foco);
+      })
+      .classed('alvo', (f) => f.properties.id === alvo);
+
+    gNos.selectAll('circle').remove();
+    descreverDominante('no mapa');
+  }
+
+  // Posição de um município no plano.
+  //   quadrante = fonte dominante (por construção, nunca por acidente de soma)
+  //   distância do centro = o quanto ela domina: 1/4 é empate perfeito, 1 é tudo dela
+  //   ângulo dentro do quadrante = qual das duas fontes vizinhas vem em segundo
+  function posicaoPlano(id, cx, cy, raio) {
+    const l = (dados[id] || {}).linhas || {};
+    const parte = (k) => (l[k] || {}).part || 0;
+    let i = 0;
+    for (let k = 1; k < ANCORAS.length; k++) {
+      if (parte(ANCORAS[k].chave) > parte(ANCORAS[i].chave)) i = k;
+    }
+    const dom = ANCORAS[i];
+    const antes = ANCORAS[(i - 1 + ANCORAS.length) % ANCORAS.length];
+    const depois = ANCORAS[(i + 1) % ANCORAS.length];
+
+    const a = parte(antes.chave), b = parte(depois.chave);
+    const t = (a + b) > 0 ? b / (a + b) : 0.5;          // 0 encosta no vizinho anterior
+    const ang = ((dom.ang - 45) + 90 * t) * Math.PI / 180;
+
+    // 0,25 é o empate entre as quatro; abaixo disso não existe dominante
+    const forca = Math.min(1, Math.max(0, (parte(dom.chave) - 0.25) / 0.75));
+    const r = raio * forca;
+    return { x: cx + r * Math.cos(ang), y: cy - r * Math.sin(ang), dom: dom.chave, forca };
+  }
+
+  function desenharPlano() {
+    const largura = figura.clientWidth || 900;
+    const lado = Math.min(largura, ampliado ? 620 : 470);
+    const altura = lado;
+    const cx = largura / 2, cy = altura / 2;
+    const raio = lado / 2 - (ampliado ? 46 : 38);
+
+    const todos = lista.filter((m) => dados[m.id] && dados[m.id].linhas);
+    const rEscala = d3.scaleSqrt()
+      .domain([0, d3.max(todos, (m) => m.pop) || 1])
+      .range([ampliado ? 2 : 1.6, ampliado ? 13 : 9]);
+
+    const itens = todos.map((m) => ({
+      id: m.id, m,
+      ...posicaoPlano(m.id, cx, cy, raio),
+      r: Math.max(ampliado ? 2 : 1.6, rEscala(m.pop)),
+    }));
+
+    svg.attr('viewBox', `0 0 ${largura} ${altura}`).attr('width', largura).attr('height', altura);
+    gEixo.attr('transform', null).selectAll('*').remove();
+
+    // moldura: a cruz que separa os quadrantes e o rótulo de cada fonte no seu canto
+    const moldura = gEixo.append('g').attr('class', 'moldura');
+    moldura.append('circle').attr('cx', cx).attr('cy', cy).attr('r', raio).attr('class', 'aro');
+    moldura.append('line').attr('class', 'eixo-cruz')
+      .attr('x1', cx - raio).attr('x2', cx + raio).attr('y1', cy).attr('y2', cy);
+    moldura.append('line').attr('class', 'eixo-cruz')
+      .attr('x1', cx).attr('x2', cx).attr('y1', cy - raio).attr('y2', cy + raio);
+
+    const conta = {};
+    for (const d of itens) if (visivel(d.m)) conta[d.dom] = (conta[d.dom] || 0) + 1;
+
+    for (const a of ANCORAS) {
+      const dir = a.ang > 90 && a.ang < 270 ? -1 : 1;      // esquerda ou direita
+      const cima = a.ang < 180 ? -1 : 1;
+      const x = cx + dir * raio, y = cy + cima * raio;
+      const g = moldura.append('g').attr('text-anchor', dir < 0 ? 'start' : 'end');
+      g.append('text').attr('class', 'rotulo-ancora')
+        .attr('x', x).attr('y', cima < 0 ? y - 8 : y + 16)
+        .attr('fill', COR_FONTE[a.chave]).text(a.curto);
+      g.append('text').attr('class', 'contagem-quad')
+        .attr('x', x).attr('y', cima < 0 ? y + 8 : y + 30)
+        .text(`${fmt(conta[a.chave] || 0)} municípios`);
+    }
+
+    gNos.selectAll('circle')
+      .data(itens, (d) => d.id)
+      .join(
+        (entra) => entra.append('circle').attr('class', 'no')
+          .attr('cx', (d) => d.x).attr('cy', (d) => d.y).attr('r', (d) => d.r),
+        (att) => att.call((s) => (semAnimacao() ? s : s.transition().duration(500))
+          .attr('cx', (d) => d.x).attr('cy', (d) => d.y).attr('r', (d) => d.r)),
+      )
+      .attr('fill', (d) => corDe(d.m))
+      .classed('apagado', (d) => !visivel(d.m) || (foco !== null && chaveCor(d.m) !== foco))
+      .classed('alvo', (d) => d.id === alvo);
+
+    const p = itens.find((d) => d.id === alvo);
+    gAlvo.selectAll('text').remove();
+    if (p) {
+      gAlvo.append('text').attr('class', 'rotulo-alvo')
+        .attr('x', p.x + p.r + 6).attr('y', p.y + 4).text(`${p.m.nome} (${p.m.uf})`);
+    }
+    descreverPlano();
+  }
+
+  function desenharEnxame() {
     // a figura e movida para dentro do dialogo ao ampliar, entao medir ela mesma
     // funciona nos dois estados -- e evita ler largura de um dialog ainda sem layout
     const largura = figura.clientWidth || 900;
@@ -196,6 +417,7 @@
       .classed('apagado', (d) => !visivel(d.m) || (foco !== null && chaveCor(d.m) !== foco))
       .classed('alvo', (d) => d.id === alvo);
 
+    gEixo.selectAll('.moldura').remove();
     gEixo.attr('transform', `translate(0,${altura - MARGEM.baixo + 8})`)
       .call(d3.axisBottom(x).ticks(largura > 700 ? 6 : 4).tickFormat((v) => fmt(v * 100) + '%'));
 
@@ -231,6 +453,29 @@
     document.getElementById('enxame-desc').textContent = texto;
   }
 
+  const descreverPlano = () => descreverDominante('no plano');
+
+  // Plano e mapa respondem à mesma pergunta — qual fonte manda em cada município —, então
+  // compartilham o texto equivalente. Muda só a frase que explica como ler o desenho.
+  function descreverDominante(onde) {
+    const dentro = lista.filter((m) => visivel(m) && dados[m.id]);
+    if (!dentro.length) return;
+    const conta = {};
+    for (const m of dentro) { const d = dominante(m); conta[d] = (conta[d] || 0) + 1; }
+    const partes = Object.entries(conta).sort((a, b) => b[1] - a[1])
+      .map(([k, n]) => `${NOMES[k]} em ${fmt(n)} (${fmt(100 * n / dentro.length)}%)`).join('; ');
+    const a = indice.get(alvo);
+    const meu = a && dominante(a);
+    const comoLer = onde === 'no mapa'
+      ? 'Cada município é pintado com a cor da fonte que pesa mais na sua renda registrada.'
+      : 'Cada ponto fica mais próximo da fonte que pesa mais no município.';
+    document.getElementById('enxame-desc').textContent =
+      `Composição da renda registrada de ${fmt(dentro.length)} ${rotuloEscopo()}. ${comoLer} `
+      + `Fonte dominante: ${partes}.`
+      + (a && meu ? ` Em ${a.nome}, a fonte dominante é ${NOMES[meu]}.` : '')
+      + (foco ? ` Destaque aplicado a ${NOMES[foco] || foco}.` : '');
+  }
+
   function rotuloEscopo() {
     const a = indice.get(alvo);
     if (escopo === 'estado') return `municípios de ${a ? a.uf : 'um estado'}`;
@@ -247,6 +492,12 @@
       el.innerHTML = '<span class="legenda-nota">Dentro de um mesmo estado a cor não acrescenta '
         + 'informação, então só o município escolhido aparece destacado.</span>';
       return;
+    }
+    if (vista === 'mapa') {
+      const nota = document.createElement('span');
+      nota.className = 'legenda-nota';
+      nota.textContent = 'Cor: fonte dominante —';
+      el.appendChild(nota);
     }
     for (const g of gs) {
       const b = document.createElement('button');
@@ -322,6 +573,10 @@
     ampliado = true;
     document.body.classList.add('ampliando');
     dialogo.appendChild(figura);
+    // Um <dialog> modal desenha na top layer: qualquer coisa fora dele fica atras do
+    // backdrop. A dica vive no body, entao era montada e posicionada mas invisivel --
+    // por isso o tooltip "parava de funcionar" com o grafico ampliado.
+    dialogo.appendChild(dica.node());
     const antes = figura.clientWidth;
     dialogo.showModal();
     desenharQuandoMudar(antes);
@@ -332,6 +587,7 @@
     document.body.classList.remove('ampliando');
     const antes = figura.clientWidth;
     document.querySelector('.palco').prepend(figura);
+    document.body.appendChild(dica.node());
     if (dialogo.open) dialogo.close();
     desenharQuandoMudar(antes);
   }
@@ -365,7 +621,30 @@
   });
 
   // ---------------------------------------------------------------- interação
-  secao.querySelector('.seletor').addEventListener('click', (e) => {
+  // O seletor de fonte só faz sentido no enxame, que mostra uma fonte por vez. O plano
+  // usa as quatro ao mesmo tempo, então some em vez de ficar ali sem efeito.
+  const seletorFonte = secao.querySelector('.seletor');
+  const vistas = secao.querySelector('.vistas');
+  if (vistas) {
+    vistas.addEventListener('click', (e) => {
+      const b = e.target.closest('button[data-vista]');
+      if (!b || b.dataset.vista === vista) return;
+      vista = b.dataset.vista;
+      foco = null;
+      // cada vista desenha coisas diferentes nos mesmos grupos: sem limpar, a moldura do
+      // plano fica por baixo do eixo da distribuicao
+      gNos.selectAll('*').remove();
+      gEixo.selectAll('*').remove();
+      gAlvo.selectAll('*').remove();
+      vistas.querySelectorAll('button').forEach((x) =>
+        x.setAttribute('aria-pressed', String(x === b)));
+      seletorFonte.hidden = vista !== 'enxame';
+      secao.dataset.vista = vista;
+      atualizar();
+    });
+  }
+
+  seletorFonte.addEventListener('click', (e) => {
     const b = e.target.closest('button[data-fonte]');
     if (!b) return;
     fonte = b.dataset.fonte;
@@ -381,14 +660,42 @@
     atualizar();
   });
 
+  // O dado sob o cursor muda de forma conforme a vista: circulo com o municipio junto no
+  // enxame e no plano, feicao do GeoJSON no mapa. Aqui os dois viram o mesmo municipio.
+  function municipioSob(alvoEvento) {
+    const d = d3.select(alvoEvento).datum();
+    if (!d) return null;
+    if (d.m) return d.m;
+    if (d.properties && d.properties.id) return indice.get(d.properties.id) || null;
+    return null;
+  }
+
   gNos.on('mousemove', (evento) => {
-    const d = d3.select(evento.target).datum();
-    if (!d || !d.id) return dica.attr('hidden', true);
-    const l = dados[d.id].linhas[fonte];
+    const m = municipioSob(evento.target);
+    if (!m || !dados[m.id]) return dica.attr('hidden', true);
+    const l = dados[m.id].linhas;
+
     dica.attr('hidden', null).html('')
-      .style('left', `${evento.pageX + 14}px`).style('top', `${evento.pageY - 10}px`);
-    dica.append('strong').text(`${d.m.nome} (${d.m.uf})`);
-    dica.append('span').text(`${fmt(d.m.pop)} hab · ${fmt(l.part * 100, 1)}% de ${NOMES[fonte]}`);
+      .style('left', `${evento.clientX + 14}px`).style('top', `${evento.clientY - 10}px`);
+    dica.append('strong').text(`${m.nome} (${m.uf})`);
+    dica.append('span').text(`${fmt(m.pop)} habitantes`);
+
+    if (vista === 'enxame') {
+      // a distribuicao e sobre uma fonte por vez: mostrar so ela e o que responde a vista
+      dica.append('span').text(`${fmt(((l[fonte] || {}).part || 0) * 100, 1)}% de ${NOMES[fonte]}`);
+      return;
+    }
+    // composicao e mapa nao dependem da fonte escolhida: as quatro linhas, da maior para
+    // a menor, que e a leitura que as duas vistas prometem
+    const tabela = dica.append('table').attr('class', 'dica-linhas');
+    ANCORAS.map((a) => ({ nome: a.curto, chave: a.chave, part: (l[a.chave] || {}).part || 0 }))
+      .sort((x, y) => y.part - x.part)
+      .forEach((linha) => {
+        const tr = tabela.append('tr');
+        tr.append('th').attr('scope', 'row')
+          .style('color', COR_FONTE[linha.chave]).text(linha.nome);
+        tr.append('td').text(`${fmt(linha.part * 100, 1)}%`);
+      });
   });
   gNos.on('mouseleave', () => dica.attr('hidden', true));
 

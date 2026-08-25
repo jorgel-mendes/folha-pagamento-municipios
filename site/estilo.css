@@ -265,6 +265,25 @@ tr[data-linha="bolsa_familia"]   { --cor: var(--c-bf); }
 
 .figura { margin: 0 0 0.75rem; }
 .figura svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+/* seletor de visualização: mesma família dos outros controles, um degrau mais discreto */
+.vistas { display: flex; flex-wrap: wrap; gap: 0.375rem; align-items: center; margin-bottom: 0.75rem; }
+.vistas button {
+  font: inherit; font-size: 0.8125rem; font-weight: 600; padding: 0.3125rem 0.6875rem;
+  cursor: pointer; color: var(--tinta-fraca); background: transparent;
+  border: 1px solid var(--linha); border-radius: 999px;
+}
+.vistas button[aria-pressed="true"] {
+  color: var(--tinta); border-color: var(--linha-forte); background: var(--fundo);
+}
+.seletor[hidden] { display: none; }
+
+/* moldura do plano de composição */
+.aro { fill: none; stroke: var(--linha); }
+.eixo-cruz { stroke: var(--linha-forte); stroke-width: 1; }
+.rotulo-ancora { font-size: 12px; font-weight: 700; font-family: var(--fonte-texto); }
+.contagem-quad { font-size: 11px; fill: var(--tinta-fraca); font-family: var(--fonte-num);
+  font-variant-numeric: tabular-nums; }
 .descricao { display: block; font-size: 0.8125rem; color: var(--tinta-fraca); margin-top: 0.5rem; }
 
 .no { stroke: var(--papel); stroke-width: 0.4; }
@@ -277,7 +296,10 @@ tr[data-linha="bolsa_familia"]   { --cor: var(--c-bf); }
 .legenda { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; font-size: 0.75rem; color: var(--tinta-fraca); margin-bottom: 1rem; }
 
 .dica {
-  position: absolute; z-index: 30; pointer-events: none; max-width: 15rem;
+  /* fixed, e nao absolute: a dica e movida para dentro do <dialog> quando o grafico e
+     ampliado, e ali 'absolute' passaria a se referir a caixa do dialogo. Com fixed, as
+     coordenadas de viewport valem nos dois casos. */
+  position: fixed; z-index: 30; pointer-events: none; max-width: 15rem;
   padding: 0.5rem 0.625rem; font-size: 0.8125rem; line-height: 1.35;
   background: var(--papel); color: var(--tinta);
   border: 1px solid var(--linha-forte); border-radius: var(--raio);
@@ -453,3 +475,15 @@ tr[data-linha="bolsa_familia"]   { --cor: var(--c-bf); }
 .topo .achado strong { font-family: var(--fonte-num); font-variant-numeric: tabular-nums; font-weight: 700; }
 .topo .para-quem { font-size: 0.8125rem; color: var(--tinta-tenue); }
 @media (min-width: 48rem) { .topo .achado { font-size: 1.0625rem; } }
+
+/* áreas do mapa */
+.area { stroke: var(--papel); stroke-width: 0.25; }
+.area.apagado { opacity: 0.12; }
+.area.alvo { stroke: var(--destaque); stroke-width: 1.6; }
+
+/* tabela de participações dentro da dica */
+.dica-linhas { border-collapse: collapse; margin-top: 0.375rem; width: 100%; }
+.dica-linhas th, .dica-linhas td { padding: 0.0625rem 0; font-size: 0.75rem; font-weight: 600; }
+.dica-linhas th { text-align: left; padding-right: 0.75rem; }
+.dica-linhas td { text-align: right; font-family: var(--fonte-num); font-variant-numeric: tabular-nums; color: var(--tinta); }
+.dica span { display: block; }

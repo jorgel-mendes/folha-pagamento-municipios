@@ -42,6 +42,13 @@
         cada lugar está mais exposto.
       </p>
 
+      <div class="vistas" role="group" aria-labelledby="vistas-rotulo">
+        <span class="rotulo" id="vistas-rotulo">Visualização</span>
+        <button type="button" data-vista="enxame" aria-pressed="true">Distribuição</button>
+        <button type="button" data-vista="plano" aria-pressed="false">Composição</button>
+        <button type="button" data-vista="mapa" aria-pressed="false">Mapa</button>
+      </div>
+
       <div class="seletor" role="group" aria-labelledby="seletor-rotulo">
         <span class="rotulo" id="seletor-rotulo">Fonte de renda</span>
         <button type="button" data-fonte="salario_privado" aria-pressed="false">Salário privado</button>
@@ -122,6 +129,7 @@
 </div>
   <dialog id="ampliado" aria-label="Gráfico ampliado"></dialog>
 <script src="vendor/d3.v7.min.js"></script>
+<script src="vendor/topojson-client.min.js"></script>
 <script src="app.js"></script>
 <script src="enxame.js"></script>
 </body>

@@ -6,11 +6,11 @@
 <title>Folha de Pagamento dos Municípios</title>
 <meta name="description" content="Quando muda uma regra do INSS, do Bolsa Família ou da folha da prefeitura, o efeito não chega igual em todo lugar. A composição da renda registrada nos 5.570 municípios brasileiros, em reais e em pessoas.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' rx='2' fill='%230f172a'/><path d='M4 3.5h8v9l-1.3-1-1.35 1-1.35-1-1.35 1-1.35-1L4 12.5z' fill='%23f8fafc'/><path d='M5.8 6h4.4M5.8 8h4.4M5.8 10h2.6' stroke='%230f172a' stroke-width='.9' stroke-linecap='round'/></svg>">
-  <link rel="stylesheet" href="estilo.css?v=cdf5e30f">
+  <link rel="stylesheet" href="estilo.css?v=5828463c">
 
 <script>document.documentElement.classList.add('js')</script>
 </head>
-<body data-versao="cdf5e30f" data-padrao="3550308">
+<body data-versao="5828463c" data-padrao="3550308">
 <div class="envelope">
 
   <header class="topo topo-painel">
@@ -82,6 +82,13 @@
         escolhida; o tamanho, a população. Escolha a fonte para ver a quais mudanças de regra
         cada lugar está mais exposto.
       </p>
+
+      <div class="vistas" role="group" aria-labelledby="vistas-rotulo">
+        <span class="rotulo" id="vistas-rotulo">Visualização</span>
+        <button type="button" data-vista="enxame" aria-pressed="true">Distribuição</button>
+        <button type="button" data-vista="plano" aria-pressed="false">Composição</button>
+        <button type="button" data-vista="mapa" aria-pressed="false">Mapa</button>
+      </div>
 
       <div class="seletor" role="group" aria-labelledby="seletor-rotulo">
         <span class="rotulo" id="seletor-rotulo">Fonte de renda</span>
@@ -163,7 +170,8 @@
 </div>
   <dialog id="ampliado" aria-label="Gráfico ampliado"></dialog>
 <script src="vendor/d3.v7.min.js"></script>
-<script src="app.js?v=cdf5e30f"></script>
-<script src="enxame.js?v=cdf5e30f"></script>
+<script src="vendor/topojson-client.min.js"></script>
+<script src="app.js?v=5828463c"></script>
+<script src="enxame.js?v=5828463c"></script>
 </body>
 </html>

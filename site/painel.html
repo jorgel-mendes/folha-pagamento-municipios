@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Folha de Pagamento dos Municípios</title>
+<meta name="description" content="Quando muda uma regra do INSS, do Bolsa Família ou da folha da prefeitura, o efeito não chega igual em todo lugar. A composição da renda registrada nos 5.570 municípios brasileiros, em reais e em pessoas.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' rx='2' fill='%230f172a'/><path d='M4 3.5h8v9l-1.3-1-1.35 1-1.35-1-1.35 1-1.35-1L4 12.5z' fill='%23f8fafc'/><path d='M5.8 6h4.4M5.8 8h4.4M5.8 10h2.6' stroke='%230f172a' stroke-width='.9' stroke-linecap='round'/></svg>">
+  <link rel="stylesheet" href="estilo.css?v=cdf5e30f">
+
+<script>document.documentElement.classList.add('js')</script>
+</head>
+<body data-versao="cdf5e30f" data-padrao="3550308">
+<div class="envelope">
+
+  <header class="topo topo-painel">
+    <p class="migalha"><a href="index.html">Folha de Pagamento dos Municípios</a></p>
+    <h1>Painel dos municípios</h1>
+    <p class="linha-fina">De onde vem a renda registrada da população em cada uma das 5.570
+      cidades brasileiras. <a href="index.html">Entenda a motivação e o método</a>.</p>
+  </header>
+
+  <div class="busca js-apenas">
+    <label for="q">Buscar município</label>
+    <input id="q" type="text" role="combobox" autocomplete="off"
+           aria-autocomplete="list" aria-expanded="false" aria-controls="sugestoes"
+           placeholder="Digite o nome da cidade">
+    <ul id="sugestoes" class="sugestoes" role="listbox" aria-label="Municípios encontrados" hidden></ul>
+  </div>
+
+  <main>
+    <section class="holerite" id="holerite" data-modo="reais" aria-live="polite">
+      
+      <div class="holerite-topo">
+        <div class="holerite-titulo">
+          <p class="holerite-rotulo">Renda registrada do município</p>
+          <p class="holerite-municipio"><span data-v="municipio">São Paulo</span>
+            <span class="holerite-uf" data-v="uf">(SP)</span></p>
+          <p class="holerite-meta"><span data-v="pop">11.904.961</span> habitantes ·
+            <span data-v="pop18">9.378.193</span> com 18 anos ou mais</p>
+        </div>
+        <p class="holerite-competencia">Competência<strong data-v="competencia">dezembro de 2025</strong></p>
+      </div>
+
+      <div class="modos">
+        <span class="rotulo" id="rot-modo">Destacar</span>
+        <button type="button" data-modo="reais" aria-pressed="true" aria-describedby="rot-modo">Reais</button>
+        <button type="button" data-modo="pessoas" aria-pressed="false" aria-describedby="rot-modo">Pessoas</button>
+      </div>
+
+      <table class="linhas">
+        <caption>Cada fonte conta em uma unidade diferente, indicada na coluna Pessoas.
+          Vínculos, benefícios e famílias não são a mesma coisa e não devem ser somados.</caption>
+        <thead>
+          <tr>
+            <th scope="col">Fonte de renda</th>
+            <th scope="col" class="num">Pessoas</th>
+            <th scope="col" class="num">Por 100 adultos</th>
+            <th scope="col" class="num">Valor médio</th>
+            <th scope="col" class="num">Massa no mês</th>
+            <th scope="col" class="num">Participação</th>
+          </tr>
+        </thead>
+        <tbody><tr data-linha="salario_privado"><th scope="row"><span class="linha-nome">Salário — setor privado</span><span class="linha-fonte">RAIS 2025</span></th><td data-col="Pessoas" data-grupo="pessoas"><span class="valor" data-v="n">4.812.015</span><span class="unidade" data-v="unidade">vínculos</span></td><td data-col="Por 100 adultos" data-grupo="pessoas"><span class="valor" data-v="por100">51,3</span></td><td data-col="Valor médio" data-grupo="reais"><span class="valor" data-v="medio">R$ 5.429</span></td><td data-col="Massa no mês" data-grupo="reais"><span class="valor" data-v="massa">R$ 25,6 bi</span></td><td data-col="Participação" data-grupo="reais"><span class="barra"><i data-v="barra" style="width:73.53%"></i></span><span class="barra-pct" data-v="part">73,5%</span></td></tr><tr data-linha="salario_publico"><th scope="row"><span class="linha-nome">Salário — administração pública</span><span class="linha-fonte">RAIS 2025</span></th><td data-col="Pessoas" data-grupo="pessoas"><span class="valor" data-v="n">595.934</span><span class="unidade" data-v="unidade">vínculos</span></td><td data-col="Por 100 adultos" data-grupo="pessoas"><span class="valor" data-v="por100">6,4</span></td><td data-col="Valor médio" data-grupo="reais"><span class="valor" data-v="medio">R$ 11.170</span></td><td data-col="Massa no mês" data-grupo="reais"><span class="valor" data-v="massa">R$ 3,3 bi</span></td><td data-col="Participação" data-grupo="reais"><span class="barra"><i data-v="barra" style="width:9.43%"></i></span><span class="barra-pct" data-v="part">9,4%</span></td></tr><tr data-linha="previdencia"><th scope="row"><span class="linha-nome">Previdência — INSS e BPC</span><span class="linha-fonte">INSS</span></th><td data-col="Pessoas" data-grupo="pessoas"><span class="valor" data-v="n">2.310.025</span><span class="unidade" data-v="unidade">benefícios</span></td><td data-col="Por 100 adultos" data-grupo="pessoas"><span class="valor" data-v="por100">24,6</span></td><td data-col="Valor médio" data-grupo="reais"><span class="valor" data-v="medio">R$ 2.393</span></td><td data-col="Massa no mês" data-grupo="reais"><span class="valor" data-v="massa">R$ 5,5 bi</span></td><td data-col="Participação" data-grupo="reais"><span class="barra"><i data-v="barra" style="width:15.87%"></i></span><span class="barra-pct" data-v="part">15,9%</span></td></tr><tr data-linha="bolsa_familia"><th scope="row"><span class="linha-nome">Benefício social — Bolsa Família</span><span class="linha-fonte">Portal da Transparência</span></th><td data-col="Pessoas" data-grupo="pessoas"><span class="valor" data-v="n">610.125</span><span class="unidade" data-v="unidade">famílias</span></td><td data-col="Por 100 adultos" data-grupo="pessoas"><span class="valor" data-v="por100">6,5</span></td><td data-col="Valor médio" data-grupo="reais"><span class="valor" data-v="medio">R$ 663</span></td><td data-col="Massa no mês" data-grupo="reais"><span class="valor" data-v="massa">R$ 404,6 mi</span></td><td data-col="Participação" data-grupo="reais"><span class="barra"><i data-v="barra" style="width:1.16%"></i></span><span class="barra-pct" data-v="part">1,2%</span></td></tr></tbody>
+      </table>
+
+      <div class="total">
+        <div class="total-linha">
+          <span class="total-rotulo">Total da renda registrada</span>
+          <span class="total-valor" data-v="total">R$ 34,8 bi</span>
+        </div>
+        <p class="total-obs">Por mês, em reais correntes.
+          Equivale a <span data-v="percapita">R$ 2.925</span> por habitante. No município, <span data-v="bf-pessoas">1.586.229</span> pessoas vivem em famílias que recebem o Bolsa Família.</p>
+      </div>
+    </section>
+
+
+    <section class="panorama js-apenas" id="panorama" aria-labelledby="panorama-titulo">
+      <h2 id="panorama-titulo">Panorama nacional</h2>
+      <p class="panorama-intro">
+        Cada ponto é um município. A posição mostra quanto da renda registrada vem da fonte
+        escolhida; o tamanho, a população. Escolha a fonte para ver a quais mudanças de regra
+        cada lugar está mais exposto.
+      </p>
+
+      <div class="seletor" role="group" aria-labelledby="seletor-rotulo">
+        <span class="rotulo" id="seletor-rotulo">Fonte de renda</span>
+        <button type="button" data-fonte="salario_privado" aria-pressed="false">Salário privado</button>
+        <button type="button" data-fonte="salario_publico" aria-pressed="false">Folha pública</button>
+        <button type="button" data-fonte="previdencia" aria-pressed="true">Previdência</button>
+        <button type="button" data-fonte="bolsa_familia" aria-pressed="false">Bolsa Família</button>
+      </div>
+
+      <div class="palco">
+        <figure class="figura" id="figura">
+          <svg id="enxame" role="img" aria-labelledby="enxame-titulo" aria-describedby="enxame-desc"></svg>
+          <figcaption>
+            <span id="enxame-titulo" class="sr-only">Distribuição dos municípios brasileiros pela
+              participação de cada fonte na renda registrada</span>
+            <span id="enxame-desc" class="descricao"></span>
+          </figcaption>
+        </figure>
+
+        <button type="button" class="engrenagem" id="abrir-opcoes"
+                aria-expanded="false" aria-controls="opcoes" aria-label="Opções do gráfico">
+          <svg viewBox="0 0 16 16" aria-hidden="true" width="14" height="14">
+            <path d="M4 6.5 8 10.5 12 6.5" fill="none" stroke="currentColor"
+                  stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <div class="opcoes" id="opcoes" hidden>
+          <fieldset>
+            <legend>Comparar com</legend>
+            <label><input type="radio" name="escopo" value="estado" checked> Municípios do estado</label>
+            <label><input type="radio" name="escopo" value="regiao"> Municípios da região</label>
+            <label><input type="radio" name="escopo" value="todos"> Todos os municípios</label>
+          </fieldset>
+          <fieldset>
+            <legend>Porte</legend>
+            <label><input type="radio" name="porte" value="" checked> Todos os portes</label>
+            <label><input type="radio" name="porte" value="ate_5k"> Até 5 mil hab.</label>
+            <label><input type="radio" name="porte" value="5k_20k"> 5 a 20 mil</label>
+            <label><input type="radio" name="porte" value="20k_100k"> 20 a 100 mil</label>
+            <label><input type="radio" name="porte" value="100k_mais"> 100 mil ou mais</label>
+          </fieldset>
+        </div>
+      </div>
+
+      <div class="legenda" id="legenda"></div>
+
+      <table class="ranking" id="ranking">
+        <caption>Exposição a <span data-v="fonte-nome">previdência</span>, entre os municípios
+          filtrados. Esta tabela traz os mesmos dados do gráfico acima.</caption>
+        <thead>
+          <tr>
+            <th scope="col">Município</th>
+            <th scope="col" class="num">População</th>
+            <th scope="col" class="num">Participação</th>
+            <th scope="col" class="num">Massa no mês</th>
+            <th scope="col" class="num">Por habitante</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <p class="ranking-obs">Mostrando <span data-v="ranking-n">0</span> municípios.
+        A ordenação é decrescente pela participação.</p>
+    </section>
+
+    <p class="nota-somatoria">
+      As taxas por 100 adultos podem somar mais de 100. Não é erro: uma mesma pessoa pode aparecer
+      em mais de uma fonte — quem recebe aposentadoria e também trabalha com carteira assinada, por
+      exemplo. Por isso o total acima soma apenas reais, nunca pessoas.
+    </p>
+
+    <p class="ancora">
+      Isto é a renda <strong>registrada e rastreável</strong> em dados públicos — não a renda total
+      da população. Ficam de fora trabalho informal, renda de capital, aluguel, agricultura de
+      subsistência e os regimes próprios de previdência de estados e municípios.
+    </p>
+  </main>
+
+</div>
+  <dialog id="ampliado" aria-label="Gráfico ampliado"></dialog>
+<script src="vendor/d3.v7.min.js"></script>
+<script src="app.js?v=cdf5e30f"></script>
+<script src="enxame.js?v=cdf5e30f"></script>
+</body>
+</html>

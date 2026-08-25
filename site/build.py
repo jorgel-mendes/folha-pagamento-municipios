@@ -152,6 +152,70 @@ def contracheque(mun: dict, dados: dict) -> str:
       </div>"""
 
 
+PORTES = [("ate_5k", "até 5 mil habitantes"), ("5k_20k", "5 a 20 mil"),
+          ("20k_100k", "20 a 100 mil"), ("100k_mais", "100 mil ou mais")]
+
+
+def estatisticas(indice: dict, dados: dict) -> dict:
+    """Números da página de entrada, calculados a partir do próprio painel.
+
+    Ficam fora do texto de propósito. Escrever à mão significa que uma correção no
+    pipeline não chega à manchete -- foi o que aconteceu quando o de-para do Bolsa
+    Família subiu para 100% e o número da abertura ficou defasado sem ninguém notar.
+    """
+    porte = {p: [0, 0] for p, _ in PORTES}
+    norte = [0, 0]
+    for cod, d in dados.items():
+        m = indice.get(cod)
+        if not m or not d.get("massa_total"):
+            continue
+        massa = lambda k: (d["linhas"].get(k) or {}).get("massa", 0)
+        if m["porte"] in porte:
+            porte[m["porte"]][1] += 1
+            if massa("previdencia") + massa("bolsa_familia") > massa("salario_privado"):
+                porte[m["porte"]][0] += 1
+        if m["regiao"] == "N":
+            norte[1] += 1
+            publico = d["linhas"].get("salario_publico") or {}
+            if "massa_municipal" not in publico and publico:
+                raise SystemExit(
+                    "dados.json sem 'massa_municipal' -- rode pipeline/03_gold.py de novo. "
+                    "A página de entrada não publica esse número estimado ou desatualizado.")
+            if publico.get("massa_municipal", 0) > max(
+                    massa("salario_privado"), massa("previdencia"), massa("bolsa_familia")):
+                norte[0] += 1
+    return {"porte": porte, "norte": norte}
+
+
+def proporcao(parte: int, todo: int) -> str:
+    """Participação de `parte` em `todo`, já formatada em pt-BR."""
+    return f"{100 * parte / todo:.1f}".translate(TROCA) + "%" if todo else "—"
+
+
+def achado(est: dict) -> str:
+    maior, total = est["porte"]["ate_5k"]
+    n_maior, n_total = est["norte"]
+    return (f"Em <strong>{proporcao(maior, total)}</strong> dos municípios com menos de 5 mil "
+            f"habitantes, aposentadorias e Bolsa Família somados movimentam mais dinheiro que "
+            f"toda a massa salarial do setor privado. E a folha da prefeitura é a maior fonte "
+            f"isolada de renda em <strong>{proporcao(n_maior, n_total)}</strong> dos municípios do Norte.")
+
+
+def tabela_porte(est: dict) -> str:
+    corpo = "\n".join(
+        f'        <tr><th scope="row">{rot}</th>'
+        f'<td class="num">{num(est["porte"][ch][1])}</td>'
+        f'<td class="num">{num(est["porte"][ch][0])}</td>'
+        f'<td class="num destaque">{proporcao(*est["porte"][ch])}</td></tr>'
+        for ch, rot in PORTES)
+    return ('    <table class="tabela-porte">\n'
+            '      <thead><tr><th scope="col">Porte do município</th>'
+            '<th scope="col" class="num">Municípios</th>'
+            '<th scope="col" class="num">Com transferências maiores</th>'
+            '<th scope="col" class="num">Proporção</th></tr></thead>\n'
+            f'      <tbody>\n{corpo}\n      </tbody>\n    </table>')
+
+
 def main() -> None:
     alvo = PADRAO
     if "--municipio" in sys.argv:
@@ -162,21 +226,42 @@ def main() -> None:
     if alvo not in indice or alvo not in dados:
         raise SystemExit(f"município {alvo} não está nos dados -- rode pipeline/03_gold.py antes")
 
-    pagina = (AQUI / "template.html").read_text("utf-8").replace(
-        "<!--CONTRACHEQUE-->", contracheque(indice[alvo], dados[alvo]))
     # Carimbo de versão nos assets. Sem isto, navegador e CDN do GitHub Pages seguem
     # servindo o CSS e o JS antigos depois de uma republicação -- o que já custou uma
     # sessão inteira de depuração de um bug que só existia no cache.
     versao = hashlib.sha1(
         b"".join((AQUI / n).read_bytes() for n in ("estilo.css", "app.js", "enxame.js"))
     ).hexdigest()[:8]
-    for arquivo in ("estilo.css", "app.js", "enxame.js"):
-        pagina = pagina.replace(f'"{arquivo}"', f'"{arquivo}?v={versao}"')
-    pagina = pagina.replace("<body>", f'<body data-padrao="{alvo}" data-versao="{versao}">')
-    (AQUI / "index.html").write_text(pagina, "utf-8")
+
+    def monta(modelo: str, saida: str, corpo: dict[str, str], atributos: str = "") -> int:
+        pagina = (AQUI / modelo).read_text("utf-8")
+        for marca, valor in corpo.items():
+            pagina = pagina.replace(marca, valor)
+        for arquivo in ("estilo.css", "app.js", "enxame.js"):
+            pagina = pagina.replace(f'"{arquivo}"', f'"{arquivo}?v={versao}"')
+        pagina = pagina.replace("<body>", f'<body data-versao="{versao}"{atributos}>')
+        (AQUI / saida).write_text(pagina, "utf-8")
+        return len(pagina)
+
+    est = estatisticas(indice, dados)
+    ref = dados[alvo]["ref"]
+    referencia = f"{MESES[int(ref[5:7]) - 1]} de {ref[:4]}"
+
+    n_porta = monta("inicio-template.html", "index.html", {
+        "<!--ACHADO-->": achado(est),
+        "<!--TABELA-PORTE-->": tabela_porte(est),
+        "<!--REFERENCIA-->": referencia,
+    })
+    n_painel = monta("painel-template.html", "painel.html", {
+        "<!--CONTRACHEQUE-->": contracheque(indice[alvo], dados[alvo]),
+    }, atributos=f' data-padrao="{alvo}"')
+
+    maior, total = est["porte"]["ate_5k"]
     print(f"versao dos assets: {versao}")
-    print(f"index.html gerado com {indice[alvo]['nome']} ({indice[alvo]['uf']}) "
-          f"pre-renderizado - {len(pagina):,} bytes")
+    print(f"index.html   porta de entrada - {n_porta:,} bytes "
+          f"(ate 5 mil hab.: {maior}/{total} = {proporcao(maior, total)})")
+    print(f"painel.html  {indice[alvo]['nome']} ({indice[alvo]['uf']}) "
+          f"pre-renderizado - {n_painel:,} bytes")
 
 
 if __name__ == "__main__":

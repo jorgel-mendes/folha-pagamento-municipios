@@ -79,7 +79,7 @@ O vocabulário é "exposição", nunca "dependência" nem "vulnerabilidade".
 
 ### O achado que sustenta a entrega
 
-Em **88,8% dos municípios com menos de 5.000 habitantes**, INSS e Bolsa Família juntos
+Em **88,9% dos municípios com menos de 5.000 habitantes**, INSS e Bolsa Família juntos
 movimentam mais dinheiro que toda a massa salarial privada. Em municípios de 5 a 20 mil, 78,7%.
 
 E a simetria não é artifício: a folha da prefeitura é a **maior fonte isolada** de renda em

@@ -375,3 +375,81 @@ tr[data-linha="bolsa_familia"]   { --cor: var(--c-bf); }
   color: var(--tinta); border-color: var(--linha-forte); background: var(--fundo); font-weight: 600;
 }
 .legenda-nota { font-size: 0.75rem; color: var(--tinta-tenue); }
+
+/* ================================================================ porta de entrada */
+.porta { max-width: 46rem; }
+.porta section { margin-top: 2.5rem; }
+.porta h2 {
+  font-size: 1.125rem; margin: 0 0 0.75rem; letter-spacing: -0.01em;
+  padding-bottom: 0.5rem; border-bottom: 1px solid var(--linha);
+}
+.porta h3 { font-size: 0.9375rem; margin: 0 0 0.375rem; }
+.porta p { font-size: 1rem; line-height: 1.6; margin: 0 0 0.875rem; color: var(--tinta-fraca); }
+.porta p strong { color: var(--tinta); font-weight: 600; }
+.porta a { color: var(--tinta); text-decoration-color: var(--linha-forte); text-underline-offset: 2px; }
+.porta a:hover { text-decoration-color: var(--tinta); }
+
+.tabela-porte { width: 100%; border-collapse: collapse; margin: 0 0 0.875rem; }
+.tabela-porte th, .tabela-porte td {
+  padding: 0.5rem 0.75rem; text-align: left; font-size: 0.9375rem;
+  border-bottom: 1px solid var(--linha);
+}
+.tabela-porte thead th {
+  font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--tinta-fraca);
+}
+.tabela-porte .num { text-align: right; }
+.tabela-porte td.num { font-family: var(--fonte-num); font-variant-numeric: tabular-nums; }
+.tabela-porte .destaque { font-weight: 700; color: var(--tinta); }
+.prova-intro { margin-bottom: 0.625rem; }
+.prova-obs { font-size: 0.875rem; }
+
+.tabela-fontes { width: 100%; border-collapse: collapse; margin: 0 0 1.25rem; }
+.tabela-fontes caption {
+  text-align: left; padding: 0 0 0.625rem; font-size: 0.875rem; color: var(--tinta-fraca);
+}
+.tabela-fontes th, .tabela-fontes td {
+  padding: 0.4375rem 0.75rem 0.4375rem 0; text-align: left; font-size: 0.875rem;
+  border-bottom: 1px solid var(--linha);
+}
+.tabela-fontes thead th {
+  font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--tinta-fraca);
+}
+.tabela-fontes tbody th { font-weight: 600; }
+.tabela-fontes td { color: var(--tinta-fraca); }
+
+.regra, .limites {
+  padding: 0.875rem 1rem; margin-bottom: 1rem;
+  background: var(--papel); border: 1px solid var(--linha); border-radius: var(--raio);
+}
+.regra p:last-child, .limites p:last-child { margin-bottom: 0; }
+
+.chamada .busca { margin-top: 0; }
+.chamada-alt { margin: 0.75rem 0 0; }
+.botao {
+  display: inline-block; padding: 0.5rem 1rem; font-size: 0.875rem; font-weight: 600;
+  color: var(--papel); background: var(--destaque);
+  border-radius: var(--raio); text-decoration: none;
+}
+.botao:hover { opacity: 0.9; }
+
+.feitura .links { display: flex; flex-wrap: wrap; gap: 1.25rem; }
+.rodape {
+  margin-top: 2.5rem; padding-top: 1rem; border-top: 1px solid var(--linha);
+  font-size: 0.8125rem; color: var(--tinta-tenue);
+}
+.rodape p { font-size: 0.8125rem; color: var(--tinta-tenue); margin: 0; }
+
+/* ---------------------------------------------------------------- abertura */
+.topo-painel .migalha { margin: 0 0 0.375rem; font-size: 0.8125rem; }
+.topo-painel .migalha a { color: var(--tinta-fraca); }
+.topo .linha-fina { margin: 0 0 0.75rem; }
+.topo .achado {
+  margin: 0 0 0.625rem; padding: 0.75rem 0 0.75rem 0.875rem;
+  border-left: 3px solid var(--linha-forte);
+  color: var(--tinta); font-size: 1rem; line-height: 1.45; max-width: 44rem;
+}
+.topo .achado strong { font-family: var(--fonte-num); font-variant-numeric: tabular-nums; font-weight: 700; }
+.topo .para-quem { font-size: 0.8125rem; color: var(--tinta-tenue); }
+@media (min-width: 48rem) { .topo .achado { font-size: 1.0625rem; } }

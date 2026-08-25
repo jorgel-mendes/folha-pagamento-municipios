@@ -220,6 +220,9 @@ def exporta_site(con, ref: str) -> None:
                 item["esferas"] = {"municipal": int(r["salario_publico_municipal_n"] or 0),
                                    "estadual": int(r["salario_publico_estadual_n"] or 0),
                                    "federal": int(r["salario_publico_federal_n"] or 0)}
+                # a massa da esfera municipal e a folha da prefeitura: e o que permite
+                # responder em quais municipios a prefeitura e a maior fonte de renda
+                item["massa_municipal"] = round(r["salario_publico_municipal_massa"] or 0)
             if chave == "bolsa_familia" and r["bolsa_familia_pessoas"]:
                 item["pessoas"] = int(r["bolsa_familia_pessoas"])
                 item["pessoas_por_familia"] = (round(r["media_pessoas_pbf"], 2)

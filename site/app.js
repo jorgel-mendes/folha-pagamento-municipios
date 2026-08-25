@@ -17,7 +17,10 @@
   const holerite = document.getElementById('holerite');
   const entrada = document.getElementById('q');
   const lista = document.getElementById('sugestoes');
-  if (!holerite || !entrada || !lista) return;
+  if (!entrada || !lista) return;
+  // A mesma busca serve às duas páginas. Na porta de entrada não há contracheque para
+  // preencher, então escolher um município navega para o painel em vez de renderizar.
+  const modoPainel = !!holerite;
 
   let indice = [];        // municipios.json
   let dados = null;       // dados.json, carregado em segundo plano
@@ -98,6 +101,7 @@
 
   function selecionar(id, { historico = true } = {}) {
     if (!porId.has(id)) return;
+    if (!modoPainel) { location.href = `painel.html?m=${id}`; return; }
     if (!dados) { pendente = id; entrada.setAttribute('aria-busy', 'true'); return; }
     renderizar(id);
     fecharSugestoes();
@@ -178,19 +182,24 @@
   });
 
   // ---------------------------------------------------------------- alternador
-  holerite.addEventListener('click', (e) => {
-    const botao = e.target.closest('button[data-modo]');
-    if (!botao) return;
-    holerite.dataset.modo = botao.dataset.modo;
-    holerite.querySelectorAll('button[data-modo]').forEach((b) => {
-      b.setAttribute('aria-pressed', String(b === botao));
+  // Só o painel tem contracheque. Sem esta guarda, o addEventListener num elemento
+  // inexistente derruba o módulo na porta de entrada -- e derruba junto a carga da
+  // lista de municípios, registrada mais abaixo, deixando a busca muda.
+  if (modoPainel) {
+    holerite.addEventListener('click', (e) => {
+      const botao = e.target.closest('button[data-modo]');
+      if (!botao) return;
+      holerite.dataset.modo = botao.dataset.modo;
+      holerite.querySelectorAll('button[data-modo]').forEach((b) => {
+        b.setAttribute('aria-pressed', String(b === botao));
+      });
     });
-  });
 
-  window.addEventListener('popstate', () => {
-    const id = new URL(location.href).searchParams.get('m') || document.body.dataset.padrao;
-    if (id !== atual) selecionar(id, { historico: false });
-  });
+    window.addEventListener('popstate', () => {
+      const id = new URL(location.href).searchParams.get('m') || document.body.dataset.padrao;
+      if (id !== atual) selecionar(id, { historico: false });
+    });
+  }
 
   // ---------------------------------------------------------------- carga
   fetch('municipios.json')
@@ -202,9 +211,11 @@
     })
     .catch(() => { entrada.placeholder = 'Não foi possível carregar a lista de municípios'; });
 
-  // dados.json é grande (3,4 MB). Como a página já mostra um município renderizado,
-  // ele carrega em segundo plano e só é esperado se o usuário escolher antes de chegar.
-  fetch('dados.json')
+  // dados.json é grande (3,4 MB) e só o painel precisa dele — a porta de entrada carrega
+  // apenas a lista de municípios, que é seis vezes menor. Como o painel já mostra um
+  // município renderizado, ele carrega em segundo plano e só é esperado se o usuário
+  // escolher outro antes de a carga terminar.
+  if (modoPainel) fetch('dados.json')
     .then((r) => r.json())
     .then((d) => {
       dados = d;

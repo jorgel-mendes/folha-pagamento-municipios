@@ -15,6 +15,7 @@ Uso:
 from __future__ import annotations
 
 import html
+import hashlib
 import json
 import sys
 from pathlib import Path
@@ -163,8 +164,17 @@ def main() -> None:
 
     pagina = (AQUI / "template.html").read_text("utf-8").replace(
         "<!--CONTRACHEQUE-->", contracheque(indice[alvo], dados[alvo]))
-    pagina = pagina.replace("<body>", f'<body data-padrao="{alvo}">')
+    # Carimbo de versão nos assets. Sem isto, navegador e CDN do GitHub Pages seguem
+    # servindo o CSS e o JS antigos depois de uma republicação -- o que já custou uma
+    # sessão inteira de depuração de um bug que só existia no cache.
+    versao = hashlib.sha1(
+        b"".join((AQUI / n).read_bytes() for n in ("estilo.css", "app.js", "enxame.js"))
+    ).hexdigest()[:8]
+    for arquivo in ("estilo.css", "app.js", "enxame.js"):
+        pagina = pagina.replace(f'"{arquivo}"', f'"{arquivo}?v={versao}"')
+    pagina = pagina.replace("<body>", f'<body data-padrao="{alvo}" data-versao="{versao}">')
     (AQUI / "index.html").write_text(pagina, "utf-8")
+    print(f"versao dos assets: {versao}")
     print(f"index.html gerado com {indice[alvo]['nome']} ({indice[alvo]['uf']}) "
           f"pre-renderizado - {len(pagina):,} bytes")
 

@@ -1,10 +1,13 @@
-/* Panorama nacional — beeswarm dos 5.571 municípios + tabela de exposição.
+/* Panorama nacional — beeswarm dos municípios + tabela de exposição.
  *
- * As coordenadas vêm prontas de site/posicoes.json, calculadas por site/posicoes.py.
- * Aqui o D3 cuida de escala, eixo, data join e transição — não há simulação de força.
+ * O empacotamento vertical é calculado aqui, no cliente, e não mais pré-computado no build.
+ * A razão: o escopo é dinâmico (estado, região ou país), e posições calculadas para os 5.571
+ * municípios deixariam buracos ao mostrar um subconjunto. O algoritmo é o dodge determinístico
+ * — ordena por x e encaixa cada ponto no menor |y| livre — não uma simulação de força, então
+ * roda em poucos milissegundos mesmo com todos os municípios.
  *
- * Regra de simetria: as quatro fontes de renda têm o mesmo peso visual e o mesmo custo
- * de clique. É o que sustenta a neutralidade do painel e não deve ser afrouxado.
+ * Regra de simetria: as quatro fontes de renda têm o mesmo peso visual e o mesmo custo de
+ * clique. É o que sustenta a neutralidade do painel e não deve ser afrouxado.
  */
 (() => {
   'use strict';
@@ -19,23 +22,35 @@
     previdencia: 'previdência (INSS e BPC)',
     bolsa_familia: 'Bolsa Família',
   };
-  const PORTES = {
-    ate_5k: 'até 5 mil habitantes', '5k_20k': '5 a 20 mil',
-    '20k_100k': '20 a 100 mil', '100k_mais': '100 mil ou mais',
-  };
-  const MARGEM = { topo: 14, dir: 12, baixo: 32, esq: 12 };
+  const REGIOES = { N: 'Norte', NE: 'Nordeste', CO: 'Centro-Oeste', SE: 'Sudeste', S: 'Sul' };
+  // paleta categórica que se sustenta nos dois temas; usada para UF quando o escopo é a região
+  const PALETA = ['#3b7dd8', '#d2691e', '#2e9e83', '#a862c4', '#c1443e',
+                  '#5a8f2f', '#c9992a', '#4aa5c4', '#b5567f'];
+  const MARGEM = { topo: 10, dir: 12, baixo: 30, esq: 12 };
+  const PAD = 0.6;            // folga entre círculos, em px
   const MAX_LINHAS = 50;
 
-  let posicoes = null, dados = null, indice = null;
+  let dados = null, indice = null, lista = null;
   let fonte = 'previdencia';
   let alvo = document.body.dataset.padrao;
-  let filtros = { uf: '', porte: '' };
+  let escopo = 'estado';
+  let porte = '';
+  let foco = null;            // grupo destacado pela legenda (região ou UF)
+  let ampliado = false;
 
   const svg = d3.select(svgEl);
   const gNos = svg.append('g').attr('class', 'nos');
   const gEixo = svg.append('g').attr('class', 'eixo');
   const gAlvo = svg.append('g').attr('class', 'destaque');
   const dica = d3.select('body').append('div').attr('class', 'dica').attr('hidden', true);
+  const dialogo = document.getElementById('ampliado');
+  const figura = document.getElementById('figura');
+
+  // Transição do D3 avança por requestAnimationFrame, que não roda em aba oculta: o
+  // desenho ficaria congelado nos valores antigos. E quem pediu menos movimento no
+  // sistema não deve receber animação nenhuma. Nos dois casos, aplica direto.
+  const semAnimacao = () => document.visibilityState === 'hidden'
+    || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const fmt = (v, c = 0) => v.toLocaleString('pt-BR', { minimumFractionDigits: c, maximumFractionDigits: c });
   const massaCurta = (v) => {
@@ -45,107 +60,222 @@
     return 'R$ ' + fmt(v);
   };
 
-  // ---------------------------------------------------------------- desenho
-  function desenhar() {
-    const linha = posicoes.linhas[fonte];
-    const largura = svgEl.clientWidth || 900;
-    const escala = (largura - MARGEM.esq - MARGEM.dir) / posicoes.largura;
-    const altura = linha.altura * escala + MARGEM.topo + MARGEM.baixo;
-    svg.attr('viewBox', `0 0 ${largura} ${altura}`).attr('height', altura);
+  // ---------------------------------------------------------------- escopo e cor
+  function noEscopo(m) {
+    const a = indice.get(alvo);
+    if (!a) return true;
+    if (escopo === 'estado') return m.uf === a.uf;
+    if (escopo === 'regiao') return m.regiao === a.regiao;
+    return true;
+  }
+  const visivel = (m) => noEscopo(m) && (!porte || m.porte === porte);
 
-    const x = d3.scaleLinear().domain([0, 1]).range([MARGEM.esq, largura - MARGEM.dir]);
-    const meio = MARGEM.topo + (linha.altura * escala) / 2;
-
-    // dados de desenho na ordem canônica de posicoes.ids
-    const pontos = [];
-    for (let i = 0; i < posicoes.ids.length; i++) {
-      const px = linha.xy[i * 2];
-      if (px === null) continue;
-      const m = indice.get(posicoes.ids[i]);
-      if (!m) continue;
-      pontos.push({
-        id: posicoes.ids[i], m,
-        cx: MARGEM.esq + px * escala,
-        cy: meio + linha.xy[i * 2 + 1] * escala,
-        r: Math.max(1, posicoes.raios[i] * escala),
-      });
-    }
-
-    gNos.selectAll('circle')
-      .data(pontos, (d) => d.id)
-      .join(
-        (entra) => entra.append('circle')
-          .attr('class', 'no')
-          .attr('fill', (d) => `var(--r-${d.m.regiao})`)
-          .attr('r', (d) => d.r)
-          .attr('cx', (d) => d.cx)
-          .attr('cy', (d) => d.cy),
-        (atualiza) => atualiza.call((sel) => sel.transition().duration(450)
-          .attr('cx', (d) => d.cx).attr('cy', (d) => d.cy).attr('r', (d) => d.r)),
-      )
-      .classed('apagado', (d) => !passa(d.m))
-      .classed('alvo', (d) => d.id === alvo);
-
-    // O eixo e desenhado na propria selecao, nao numa transicao: aplicar um eixo sobre
-    // transicao deixa o texto dos ticks vazio na primeira renderizacao. E nao ha o que
-    // animar -- o dominio e sempre 0 a 100%, entao os ticks ficam nos mesmos pixels.
-    gEixo.attr('transform', `translate(0,${altura - MARGEM.baixo + 8})`)
-      .call(d3.axisBottom(x).ticks(6).tickFormat((v) => fmt(v * 100) + '%'));
-
-    marcarAlvo(pontos, largura);
-    descrever(pontos);
+  // A cor muda com o escopo: no país inteiro o padrão que importa é regional; dentro de uma
+  // região, é a diferença entre estados; dentro de um estado, nenhuma cor agrega — só o
+  // município escolhido precisa se destacar.
+  let escalaUF = null;
+  function chaveCor(m) {
+    if (escopo === 'todos') return m.regiao;
+    if (escopo === 'regiao') return m.uf;
+    return null;
+  }
+  function corDe(m) {
+    if (escopo === 'estado') return m.id === alvo ? 'var(--alvo-cor)' : 'var(--neutro)';
+    if (escopo === 'todos') return `var(--r-${m.regiao})`;
+    return escalaUF ? escalaUF(m.uf) : 'var(--neutro)';
   }
 
-  function marcarAlvo(pontos, largura) {
-    const p = pontos.find((d) => d.id === alvo);
+  function grupos() {
+    if (escopo === 'estado') return [];
+    const chaves = [...new Set(lista.filter(visivel).map(chaveCor))].sort();
+    if (escopo === 'todos') {
+      const ordem = ['N', 'NE', 'CO', 'SE', 'S'];
+      return ordem.filter((k) => chaves.includes(k))
+        .map((k) => ({ chave: k, nome: REGIOES[k], cor: `var(--r-${k})` }));
+    }
+    escalaUF = d3.scaleOrdinal().domain(chaves).range(PALETA);
+    return chaves.map((k) => ({ chave: k, nome: k, cor: escalaUF(k) }));
+  }
+
+  // ---------------------------------------------------------------- empacotamento
+  // Dodge com raio variável: percorre em ordem de x e coloca cada círculo no menor |y| que
+  // não colide. A lista encadeada descarta o que já ficou longe demais à esquerda, o que
+  // mantém o custo próximo de linear.
+  function empacotar(itens) {
+    const eps = 1e-3;
+    const rMax = d3.max(itens, (d) => d.r) || 1;
+    let cabeca = null, cauda = null;
+
+    const bate = (x, y, r) => {
+      let a = cabeca;
+      while (a) {
+        const dr = r + a.r + PAD;
+        if (dr * dr - eps > (a.x - x) ** 2 + (a.y - y) ** 2) return true;
+        a = a.next;
+      }
+      return false;
+    };
+
+    itens.sort((a, b) => a.x - b.x);
+    for (const b of itens) {
+      while (cabeca && cabeca.x < b.x - 2 * rMax - PAD) cabeca = cabeca.next;
+      if (bate(b.x, 0, b.r)) {
+        // candidatos: alturas em que b encosta em algum círculo já posicionado, nos dois
+        // sentidos — subir e descer — para o enxame crescer simétrico em torno do eixo
+        let melhor = Infinity;
+        for (let a = cabeca; a; a = a.next) {
+          const dr = b.r + a.r + PAD;
+          const dx = a.x - b.x;
+          const base = dr * dr - dx * dx;
+          if (base <= 0) continue;
+          const dy = Math.sqrt(base);
+          for (const y of [a.y + dy, a.y - dy]) {
+            if (Math.abs(y) < Math.abs(melhor) && !bate(b.x, y, b.r)) melhor = y;
+          }
+        }
+        b.y = Number.isFinite(melhor) ? melhor : 0;
+      } else {
+        b.y = 0;
+      }
+      b.next = null;
+      if (cauda === null) cabeca = cauda = b;
+      else cauda = cauda.next = b;
+    }
+    return itens;
+  }
+
+  // ---------------------------------------------------------------- desenho
+  function desenhar() {
+    // a figura e movida para dentro do dialogo ao ampliar, entao medir ela mesma
+    // funciona nos dois estados -- e evita ler largura de um dialog ainda sem layout
+    const largura = figura.clientWidth || 900;
+    const x = d3.scaleLinear().domain([0, 1]).range([MARGEM.esq, largura - MARGEM.dir]);
+
+    const alvos = lista.filter((m) => visivel(m) && dados[m.id] && dados[m.id].linhas[fonte]);
+    // raio pela população, em escala de raiz — área proporcional ao número de habitantes.
+    // Com menos municípios em cena sobra espaço, então os pontos podem crescer.
+    // O piso do raio define a altura do enxame: pontos muito pequenos empacotam numa
+    // linha fina e a distribuição some. O teto é contido para uma capital não achatar
+    // o resto — a leitura que importa é a forma da distribuição, não o tamanho de uma cidade.
+    // O piso do raio define a altura do enxame: pontos muito pequenos empacotam numa linha
+    // fina e a distribuição some. Como a densidade varia muito entre escopos (um estado tem
+    // dezenas, o país tem milhares), o piso acompanha a contagem em vez de ser fixo.
+    const n = alvos.length;
+    const piso = n > 3000 ? 2.2 : n > 1200 ? 3 : n > 400 ? 3.6 : 4.4;
+    const teto = Math.max(piso + 2, n > 3000 ? 7 : n > 1200 ? 10 : 13);
+    const f = ampliado ? 1.35 : 1;
+    const rEscala = d3.scaleSqrt()
+      .domain([0, d3.max(alvos, (m) => m.pop) || 1])
+      .range([piso * f, teto * f]);
+
+    const itens = alvos.map((m) => ({
+      id: m.id, m,
+      x: x(dados[m.id].linhas[fonte].part),
+      r: Math.max(piso * f, rEscala(m.pop)),
+    }));
+    empacotar(itens);
+
+    const extremo = d3.max(itens, (d) => Math.abs(d.y) + d.r) || 10;
+    const altura = extremo * 2 + MARGEM.topo + MARGEM.baixo + 6;
+    const meio = MARGEM.topo + extremo;
+    svg.attr('viewBox', `0 0 ${largura} ${altura}`)
+      .attr('width', largura).attr('height', altura);
+
+    gNos.selectAll('circle')
+      .data(itens, (d) => d.id)
+      .join(
+        (entra) => entra.append('circle').attr('class', 'no')
+          .attr('cx', (d) => d.x).attr('cy', (d) => meio + d.y).attr('r', (d) => d.r),
+        (att) => att.call((s) => (semAnimacao() ? s : s.transition().duration(400))
+          .attr('cx', (d) => d.x).attr('cy', (d) => meio + d.y).attr('r', (d) => d.r)),
+      )
+      .attr('fill', (d) => corDe(d.m))
+      .classed('apagado', (d) => foco !== null && chaveCor(d.m) !== foco)
+      .classed('alvo', (d) => d.id === alvo);
+
+    gEixo.attr('transform', `translate(0,${altura - MARGEM.baixo + 8})`)
+      .call(d3.axisBottom(x).ticks(largura > 700 ? 6 : 4).tickFormat((v) => fmt(v * 100) + '%'));
+
+    marcarAlvo(itens, largura, meio);
+    descrever(itens);
+  }
+
+  function marcarAlvo(itens, largura, meio) {
+    const p = itens.find((d) => d.id === alvo);
     gAlvo.selectAll('text').remove();
     if (!p) return;
-    const aDireita = p.cx < largura / 2;
-    gAlvo.append('text')
-      .attr('class', 'rotulo-alvo')
-      .attr('x', p.cx + (aDireita ? p.r + 6 : -p.r - 6))
-      .attr('y', p.cy + 4)
+    const aDireita = p.x < largura / 2;
+    gAlvo.append('text').attr('class', 'rotulo-alvo')
+      .attr('x', p.x + (aDireita ? p.r + 6 : -p.r - 6))
+      .attr('y', meio + p.y + 4)
       .attr('text-anchor', aDireita ? 'start' : 'end')
       .text(`${p.m.nome} (${p.m.uf})`);
   }
 
-  // Texto equivalente para quem usa leitor de tela: o gráfico é decorativo sem isto.
-  function descrever(pontos) {
-    const vals = pontos.filter((p) => passa(p.m) && dados[p.id] && dados[p.id].linhas[fonte])
-      .map((p) => dados[p.id].linhas[fonte].part).sort(d3.ascending);
+  // Texto equivalente para leitor de tela: sem isto o gráfico é decorativo.
+  function descrever(itens) {
+    const vals = itens.map((d) => dados[d.id].linhas[fonte].part).sort(d3.ascending);
     if (!vals.length) return;
-    const dAlvo = dados[alvo];
-    const p = dAlvo && dAlvo.linhas[fonte];
-    const mAlvo = indice.get(alvo);
-    const mediana = d3.quantile(vals, 0.5);
-    const acima = p ? vals.filter((v) => v < p.part).length : 0;
-    const texto = `Distribuição de ${vals.length.toLocaleString('pt-BR')} municípios pela `
-      + `participação de ${NOMES[fonte]} na renda registrada. Mediana de `
-      + `${fmt(mediana * 100, 1)}%.`
-      + (p && mAlvo ? ` ${mAlvo.nome} está em ${fmt(p.part * 100, 1)}%, acima de `
-             + `${fmt(100 * acima / vals.length)}% dos municípios comparados.` : '');
+    const a = indice.get(alvo);
+    const p = dados[alvo] && dados[alvo].linhas[fonte];
+    const abaixo = p ? vals.filter((v) => v < p.part).length : 0;
+    const texto = `Distribuição de ${fmt(vals.length)} ${rotuloEscopo()} pela participação de `
+      + `${NOMES[fonte]} na renda registrada. Mediana de ${fmt(d3.quantile(vals, 0.5) * 100, 1)}%.`
+      + (p && a ? ` ${a.nome} está em ${fmt(p.part * 100, 1)}%, acima de `
+                  + `${fmt(100 * abaixo / vals.length)}% dos municípios comparados.` : '')
+      + (foco ? ` Destaque aplicado a ${escopo === 'todos' ? REGIOES[foco] : foco}.` : '');
     document.getElementById('enxame-desc').textContent = texto;
   }
 
-  const passa = (m) => (!filtros.uf || m.uf === filtros.uf)
-    && (!filtros.porte || m.porte === filtros.porte);
+  function rotuloEscopo() {
+    const a = indice.get(alvo);
+    if (escopo === 'estado') return `municípios de ${a ? a.uf : 'um estado'}`;
+    if (escopo === 'regiao') return `municípios ${a ? 'do ' + REGIOES[a.regiao] : 'de uma região'}`;
+    return 'municípios do Brasil';
+  }
+
+  // ---------------------------------------------------------------- legenda
+  function legenda() {
+    const el = document.getElementById('legenda');
+    el.textContent = '';
+    const gs = grupos();
+    if (!gs.length) {
+      el.innerHTML = '<span class="legenda-nota">Dentro de um mesmo estado a cor não acrescenta '
+        + 'informação, então só o município escolhido aparece destacado.</span>';
+      return;
+    }
+    for (const g of gs) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'chave';
+      b.dataset.chave = g.chave;
+      b.style.setProperty('--cor-reg', g.cor);
+      b.setAttribute('aria-pressed', String(foco === g.chave));
+      b.textContent = g.nome;
+      b.title = foco === g.chave ? 'Mostrar todos de novo' : `Destacar ${g.nome}`;
+      el.appendChild(b);
+    }
+  }
+
+  const atualizar = () => { if (dados && indice) { legenda(); desenhar(); tabela(); } };
 
   // ---------------------------------------------------------------- tabela
   function tabela() {
     const corpo = document.querySelector('#ranking tbody');
     const linhas = [];
-    for (const [id, d] of Object.entries(dados)) {
-      const m = indice.get(id);
-      const l = d.linhas[fonte];
-      if (!m || !l || !passa(m)) continue;
-      linhas.push({ id, m, part: l.part, massa: l.massa, pc: d.massa_per_capita });
+    for (const m of lista) {
+      const d = dados[m.id];
+      const l = d && d.linhas[fonte];
+      if (!l || !visivel(m)) continue;
+      if (foco !== null && chaveCor(m) !== foco) continue;
+      linhas.push({ id: m.id, m, part: l.part, massa: l.massa, pc: d.massa_per_capita });
     }
     linhas.sort((a, b) => b.part - a.part);
 
     const mostrar = linhas.slice(0, MAX_LINHAS);
-    const naLista = mostrar.some((r) => r.id === alvo);
     const oAlvo = linhas.find((r) => r.id === alvo);
-    if (!naLista && oAlvo) mostrar.push(oAlvo);   // o município escolhido nunca some da tabela
+    // o município escolhido nunca some da tabela, mesmo fora das primeiras posições
+    if (oAlvo && !mostrar.includes(oAlvo)) mostrar.push(oAlvo);
 
     corpo.textContent = '';
     for (const r of mostrar) {
@@ -155,7 +285,7 @@
       th.scope = 'row';
       const marca = document.createElement('span');
       marca.className = 'marca';
-      marca.style.setProperty('--cor-reg', `var(--r-${r.m.regiao})`);
+      marca.style.setProperty('--cor-reg', corDe(r.m));
       th.append(marca, `${r.m.nome} (${r.m.uf})`);
       tr.appendChild(th);
       for (const v of [fmt(r.m.pop), fmt(r.part * 100, 1) + '%', massaCurta(r.massa), 'R$ ' + fmt(r.pc)]) {
@@ -170,9 +300,65 @@
     document.querySelector('[data-v="ranking-n"]').textContent = fmt(linhas.length);
   }
 
-  // o app.js pode anunciar uma troca de municipio antes de posicoes/dados chegarem
-  const pronto = () => posicoes && dados && indice;
-  const atualizar = () => { if (pronto()) { desenhar(); tabela(); } };
+  // ---------------------------------------------------------------- ampliar
+  // O layout do <dialog> só estabiliza um ou mais quadros depois de showModal(), e o
+  // ResizeObserver não é confiável em toda superfície de renderização. Então esperamos
+  // a largura útil realmente mudar antes de redesenhar, com um teto de tentativas.
+  // setTimeout e nao requestAnimationFrame: em aba oculta o rAF nao roda nenhum quadro,
+  // e o desenho ficaria preso na largura antiga ao voltar.
+  function desenharQuandoMudar(larguraAnterior, restantes = 12) {
+    setTimeout(() => {
+      if (figura.clientWidth !== larguraAnterior || restantes <= 0) desenhar();
+      else desenharQuandoMudar(larguraAnterior, restantes - 1);
+    }, 30);
+  }
+
+  function abrir() {
+    if (ampliado || typeof dialogo.showModal !== 'function') return;
+    ampliado = true;
+    document.body.classList.add('ampliando');
+    dialogo.appendChild(figura);
+    const antes = figura.clientWidth;
+    dialogo.showModal();
+    desenharQuandoMudar(antes);
+  }
+  function fechar() {
+    if (!ampliado) return;
+    ampliado = false;
+    document.body.classList.remove('ampliando');
+    const antes = figura.clientWidth;
+    document.querySelector('.palco').prepend(figura);
+    if (dialogo.open) dialogo.close();
+    desenharQuandoMudar(antes);
+  }
+  figura.addEventListener('click', (e) => { if (!ampliado && !e.target.closest('.opcoes')) abrir(); });
+  // clique no backdrop: o alvo do evento é o próprio dialog, nunca um filho
+  dialogo.addEventListener('click', (e) => { if (e.target === dialogo) fechar(); });
+  dialogo.addEventListener('close', fechar);
+
+  // ---------------------------------------------------------------- opções
+  const botaoOpcoes = document.getElementById('abrir-opcoes');
+  const painel = document.getElementById('opcoes');
+  function alternarPainel(mostrar) {
+    painel.hidden = !mostrar;
+    botaoOpcoes.setAttribute('aria-expanded', String(mostrar));
+  }
+  botaoOpcoes.addEventListener('click', (e) => {
+    e.stopPropagation();
+    alternarPainel(painel.hidden);
+  });
+  painel.addEventListener('click', (e) => e.stopPropagation());
+  document.addEventListener('click', (e) => {
+    if (!painel.hidden && !e.target.closest('#opcoes, #abrir-opcoes')) alternarPainel(false);
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !painel.hidden) { alternarPainel(false); botaoOpcoes.focus(); }
+  });
+  painel.addEventListener('change', (e) => {
+    if (e.target.name === 'escopo') { escopo = e.target.value; foco = null; }
+    if (e.target.name === 'porte') porte = e.target.value;
+    atualizar();
+  });
 
   // ---------------------------------------------------------------- interação
   secao.querySelector('.seletor').addEventListener('click', (e) => {
@@ -184,11 +370,11 @@
     atualizar();
   });
 
-  document.getElementById('f-uf').addEventListener('change', (e) => {
-    filtros.uf = e.target.value; atualizar();
-  });
-  document.getElementById('f-porte').addEventListener('change', (e) => {
-    filtros.porte = e.target.value; atualizar();
+  document.getElementById('legenda').addEventListener('click', (e) => {
+    const b = e.target.closest('.chave');
+    if (!b) return;
+    foco = foco === b.dataset.chave ? null : b.dataset.chave;   // clicar de novo desfaz
+    atualizar();
   });
 
   gNos.on('mousemove', (evento) => {
@@ -204,34 +390,25 @@
 
   document.addEventListener('municipio:mudou', (e) => {
     alvo = e.detail.id;
-    if (!pronto()) return;
-    const m = indice.get(alvo);
-    // acompanha o município escolhido: comparar com iguais é o recorte útil
-    if (m && !filtros.porte) document.getElementById('f-porte').value = filtros.porte = m.porte;
+    foco = null;
     atualizar();
   });
 
   let redimensiona;
   window.addEventListener('resize', () => {
     clearTimeout(redimensiona);
-    redimensiona = setTimeout(() => { if (pronto()) desenhar(); }, 180);
+    redimensiona = setTimeout(() => { if (dados) desenhar(); }, 180);
   });
 
   // ---------------------------------------------------------------- carga
+  const v = document.body.dataset.versao ? `?v=${document.body.dataset.versao}` : '';
   Promise.all([
-    fetch('posicoes.json').then((r) => r.json()),
-    fetch('dados.json').then((r) => r.json()),
-    fetch('municipios.json').then((r) => r.json()),
-  ]).then(([p, d, m]) => {
-    posicoes = p; dados = d;
+    fetch(`dados.json${v}`).then((r) => r.json()),
+    fetch(`municipios.json${v}`).then((r) => r.json()),
+  ]).then(([d, m]) => {
+    dados = d;
+    lista = m;
     indice = new Map(m.map((x) => [x.id, x]));
-
-    const sel = document.getElementById('f-uf');
-    for (const uf of [...new Set(m.map((x) => x.uf))].sort()) {
-      sel.append(new Option(uf, uf));
-    }
-    const meu = indice.get(alvo);
-    if (meu) document.getElementById('f-porte').value = filtros.porte = meu.porte;
     atualizar();
   }).catch(() => {
     document.getElementById('enxame-desc').textContent =

@@ -124,8 +124,12 @@ abas. O estado atual precisa ser óbvio sem depender de cor.
 - Raio proporcional à população (escala de raiz quadrada, mínimo 1,5px).
 - Cor por região, com paleta segura para daltonismo.
 - Município selecionado no Bloco 1 fica destacado com anel e rótulo persistente.
-- **Posições pré-computadas no build.** Nada de `forceSimulation` rodando no navegador com 5.570
-  nós — o build gera `x`,`y` e o cliente só desenha.
+- **Empacotamento calculado no cliente**, com o algoritmo *dodge* determinístico: ordena por x
+  e encaixa cada ponto no menor |y| livre. Não é simulação de força — roda em milissegundos
+  mesmo com os 5.571 municípios. Foi preciso trazer o cálculo para o cliente porque o escopo é
+  dinâmico: posições pré-computadas para o país inteiro deixariam buracos ao exibir um estado.
+- **Raio pela população**, com piso que acompanha a contagem de pontos em cena. Piso fixo faz
+  o enxame virar uma linha fina quando há muitos municípios e some com a distribuição.
 - Tooltip no hover e no foco por teclado: nome, UF, população, % da linha selecionada.
 
 ### Seletor de linha — a regra de simetria
@@ -133,6 +137,22 @@ abas. O estado atual precisa ser óbvio sem depender de cor.
 As quatro linhas aparecem como opções de **igual peso visual, igual destaque e igual número de
 cliques**. É requisito de produto, não preferência estética: é o que sustenta a neutralidade do
 painel. Ver [discovery-plan.md](discovery-plan.md), seção 6.
+
+### Escopo, ampliação e foco
+
+Três controles, todos desenhados para não competir com o gráfico:
+
+- **Escopo** (`estado` por padrão, `região`, `todos`). O padrão é o estado do município
+  escolhido: é o recorte mais leve e o grupo de comparação mais intuitivo para um gestor.
+- **Cor conforme o escopo.** Em `todos`, cor por região — o padrão que importa é regional.
+  Em `região`, cor por UF — a diferença relevante passa a ser entre estados. Em `estado`,
+  nenhuma cor agrega informação, então só o município escolhido aparece destacado.
+- **Legenda clicável.** Clicar numa cor destaca só aquele grupo e restringe a tabela;
+  clicar de novo desfaz. Vale para região e para UF.
+- **Ampliar.** Clique no gráfico abre-o num `<dialog>` modal; clique fora ou `Esc` volta.
+  A figura é movida para dentro do diálogo e redesenhada — não há duplicação de SVG.
+- **Botão de opções.** Uma seta discreta no canto superior direito, a 45% de opacidade,
+  que só ganha contorno no hover ou no foco. Abriga escopo e porte.
 
 ### Tabela de exposição
 

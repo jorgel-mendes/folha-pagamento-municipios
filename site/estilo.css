@@ -275,13 +275,6 @@ tr[data-linha="bolsa_familia"]   { --cor: var(--c-bf); }
 .rotulo-alvo { fill: var(--tinta); font-size: 12px; font-weight: 700; paint-order: stroke; stroke: var(--papel); stroke-width: 3.5; }
 
 .legenda { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; font-size: 0.75rem; color: var(--tinta-fraca); margin-bottom: 1rem; }
-.legenda span { display: flex; align-items: center; gap: 0.3125rem; }
-.legenda span::before { content: ""; width: 0.625rem; height: 0.625rem; border-radius: 50%; background: var(--cor-reg); }
-.legenda [data-regiao="N"]  { --cor-reg: var(--r-N); }
-.legenda [data-regiao="NE"] { --cor-reg: var(--r-NE); }
-.legenda [data-regiao="CO"] { --cor-reg: var(--r-CO); }
-.legenda [data-regiao="SE"] { --cor-reg: var(--r-SE); }
-.legenda [data-regiao="S"]  { --cor-reg: var(--r-S); }
 
 .dica {
   position: absolute; z-index: 30; pointer-events: none; max-width: 15rem;
@@ -309,3 +302,76 @@ tr[data-linha="bolsa_familia"]   { --cor: var(--c-bf); }
   .ranking td:nth-child(4), .ranking th:nth-child(4) { display: none; }
   .seletor button { min-width: 0; flex: 1 1 45%; }
 }
+
+/* ================================================================ palco do gráfico */
+:root { --neutro: #9aa3ad; --alvo-cor: #1b1c1e; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema="claro"]) { --neutro: #4d545c; --alvo-cor: #ffffff; }
+}
+
+.palco { position: relative; }
+.figura { margin: 0 0 0.5rem; cursor: zoom-in; }
+.figura:hover { background: color-mix(in srgb, var(--tinta) 3%, transparent); }
+
+/* Botão de opções: discreto por padrão, some do caminho até ser procurado. */
+.engrenagem {
+  position: absolute; top: 0; right: 0; z-index: 5;
+  display: flex; align-items: center; justify-content: center;
+  width: 1.75rem; height: 1.75rem; padding: 0; cursor: pointer;
+  color: var(--tinta-tenue); background: transparent;
+  border: 1px solid transparent; border-radius: var(--raio);
+  opacity: 0.45; transition: opacity 0.15s, color 0.15s;
+}
+.palco:hover .engrenagem, .engrenagem:focus-visible, .engrenagem[aria-expanded="true"] {
+  opacity: 1; color: var(--tinta-fraca); border-color: var(--linha);
+}
+.engrenagem[aria-expanded="true"] svg { transform: rotate(180deg); }
+
+.opcoes {
+  position: absolute; top: 2rem; right: 0; z-index: 25;
+  min-width: 13rem; padding: 0.375rem 0.25rem;
+  background: var(--papel); border: 1px solid var(--linha-forte);
+  border-radius: var(--raio); box-shadow: 0 8px 24px rgb(0 0 0 / 0.16);
+}
+.opcoes[hidden] { display: none; }
+.opcoes fieldset { border: 0; margin: 0; padding: 0.25rem 0; }
+.opcoes fieldset + fieldset { border-top: 1px solid var(--linha); margin-top: 0.25rem; }
+.opcoes legend {
+  padding: 0.25rem 0.625rem; font-size: 0.6875rem; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase; color: var(--tinta-tenue);
+}
+.opcoes label {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.3125rem 0.625rem; font-size: 0.8125rem; cursor: pointer; border-radius: var(--raio);
+}
+.opcoes label:hover { background: var(--fundo); }
+.opcoes input { margin: 0; accent-color: var(--tinta); }
+
+/* ---------------------------------------------------------------- ampliado */
+#ampliado {
+  width: min(96vw, 90rem); max-width: none; padding: 1.25rem;
+  background: var(--papel); color: var(--tinta);
+  border: 1px solid var(--linha-forte); border-radius: var(--raio);
+}
+#ampliado::backdrop { background: rgb(0 0 0 / 0.55); }
+#ampliado .figura { cursor: default; }
+#ampliado .figura:hover { background: transparent; }
+#ampliado .engrenagem { display: none; }
+
+/* ---------------------------------------------------------------- legenda clicável */
+.legenda { display: flex; flex-wrap: wrap; gap: 0.375rem 0.5rem; align-items: center; margin-bottom: 1rem; }
+.legenda .chave {
+  display: inline-flex; align-items: center; gap: 0.375rem;
+  font: inherit; font-size: 0.75rem; color: var(--tinta-fraca);
+  padding: 0.1875rem 0.5rem 0.1875rem 0.375rem; cursor: pointer;
+  background: transparent; border: 1px solid transparent; border-radius: 999px;
+}
+.legenda .chave::before {
+  content: ""; width: 0.625rem; height: 0.625rem; border-radius: 50%;
+  background: var(--cor-reg); flex: 0 0 auto;
+}
+.legenda .chave:hover { border-color: var(--linha); }
+.legenda .chave[aria-pressed="true"] {
+  color: var(--tinta); border-color: var(--linha-forte); background: var(--fundo); font-weight: 600;
+}
+.legenda-nota { font-size: 0.75rem; color: var(--tinta-tenue); }

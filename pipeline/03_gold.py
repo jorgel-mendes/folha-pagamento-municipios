@@ -52,11 +52,17 @@ def monta_painel(con: duckdb.DuckDBPyConnection, sv: Path) -> None:
              sum(base_media_vinculos) FILTER (WHERE setor='privado') AS priv_base_n,
              sum(base_media_massa)    FILTER (WHERE setor='privado') AS priv_base_massa,
              sum(vinculos)            FILTER (WHERE setor='publico') AS pub_n,
-             sum(massa_salarial)      FILTER (WHERE setor='publico') AS pub_massa,
+             -- Publico usa a remuneracao MEDIA do ano (`massa_media_anual`), nao a de
+             -- dezembro. Motivo: dezembro tem campo vazio em 50% dos vinculos federais e
+             -- 38% dos estaduais (celetista tem 9%) -- estatutario nao preenche bem a
+             -- remuneracao do mes de referencia na RAIS. Usar dezembro subestimava a massa
+             -- publica em ~R$4,5bi/mes nacionalmente. Privado continua em dezembro, que e
+             -- o padrao dos relatorios do PDET e nao sofre desse problema. Ver nota tecnica.
+             sum(massa_media_anual)   FILTER (WHERE setor='publico') AS pub_massa,
              sum(base_media_vinculos) FILTER (WHERE setor='publico') AS pub_base_n,
              sum(base_media_massa)    FILTER (WHERE setor='publico') AS pub_base_massa,
-             sum(vinculos)       FILTER (WHERE setor='publico' AND esfera='municipal') AS pub_n_mun,
-             sum(massa_salarial) FILTER (WHERE setor='publico' AND esfera='municipal') AS pub_massa_mun,
+             sum(vinculos)          FILTER (WHERE setor='publico' AND esfera='municipal') AS pub_n_mun,
+             sum(massa_media_anual) FILTER (WHERE setor='publico' AND esfera='municipal') AS pub_massa_mun,
              sum(vinculos)       FILTER (WHERE setor='publico' AND esfera='estadual')  AS pub_n_est,
              sum(vinculos)       FILTER (WHERE setor='publico' AND esfera='federal')   AS pub_n_fed
       FROM {p('rais')} GROUP BY 1),
@@ -251,8 +257,10 @@ def dicionario(out: Path) -> None:
               "| `pop_total` | População residente estimada | pessoas |",
               f"| `pop_adulta` | População com {C.IDADE_ADULTA} anos ou mais | pessoas |"]
     for chave, unidade, rotulo, fonte, base_media in LINHAS:
+        desc_massa = ("massa — remuneração média do ano (não a de dezembro; ver nota técnica)"
+                      if chave == "salario_publico" else "massa mensal")
         linhas += [f"| `{chave}_n` | {rotulo} — contagem ({fonte}) | **{unidade}** |",
-                   f"| `{chave}_massa` | {rotulo} — massa mensal | R$ |",
+                   f"| `{chave}_massa` | {rotulo} — {desc_massa} | R$ |",
                    f"| `{chave}_medio` | {rotulo} — valor médio"
                    + (f" (base: {C.FAIXA_MEDIA_SM[0]} a {C.FAIXA_MEDIA_SM[1]} SM)" if base_media else "")
                    + f" | R$ / {unidade[:-1]} |",
@@ -269,6 +277,11 @@ def dicionario(out: Path) -> None:
         "justamente para permitir leitura relativa sem induzir soma — elas podem ultrapassar 100 "
         "no conjunto, e isso não é erro.", "",
         "As colunas `_massa` **são** somáveis: representam fluxos de dinheiro distintos.", "",
+        "`salario_publico_massa` usa a remuneração **média do ano** de cada vínculo, não a "
+        "de dezembro como as demais linhas de salário. Motivo: o campo de remuneração de "
+        "dezembro vem vazio em 50% dos vínculos federais e 38% dos estaduais na RAIS — "
+        "estatutário não preenche esse campo tão bem quanto celetista. Detalhes na nota "
+        "técnica.", "",
     ]
     out.write_text("\n".join(linhas), encoding="utf-8")
 

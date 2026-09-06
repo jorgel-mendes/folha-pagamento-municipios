@@ -266,15 +266,21 @@ tr[data-linha="bolsa_familia"]   { --cor: var(--c-bf); }
 .figura { margin: 0 0 0.75rem; }
 .figura svg { display: block; width: 100%; height: auto; overflow: visible; }
 
-/* seletor de visualização: mesma família dos outros controles, um degrau mais discreto */
+/* seletor de visualização: mesma família dos outros controles, um degrau mais discreto --
+   mas precisa ler como controle mesmo parado numa captura de tela, não só ao passar o
+   mouse. Por isso o não-selecionado já tem fundo e sombra de chip, e o selecionado é
+   sólido -- a diferença de peso entre os dois é o que diz "isto é um menu". */
 .vistas { display: flex; flex-wrap: wrap; gap: 0.375rem; align-items: center; margin-bottom: 0.75rem; }
 .vistas button {
-  font: inherit; font-size: 0.8125rem; font-weight: 600; padding: 0.3125rem 0.6875rem;
-  cursor: pointer; color: var(--tinta-fraca); background: transparent;
-  border: 1px solid var(--linha); border-radius: 999px;
+  font: inherit; font-size: 0.8125rem; font-weight: 600; padding: 0.3125rem 0.75rem;
+  cursor: pointer; color: var(--tinta-fraca); background: var(--papel);
+  border: 1px solid var(--linha-forte); border-radius: 999px;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.06);
 }
+.vistas button:hover { color: var(--tinta); border-color: var(--tinta-tenue); }
 .vistas button[aria-pressed="true"] {
-  color: var(--tinta); border-color: var(--linha-forte); background: var(--fundo);
+  color: var(--papel); border-color: var(--destaque); background: var(--destaque);
+  box-shadow: none;
 }
 .seletor[hidden] { display: none; }
 
@@ -423,8 +429,15 @@ tr[data-linha="bolsa_familia"]   { --cor: var(--c-bf); }
 .tabela-porte .num { text-align: right; }
 .tabela-porte td.num { font-family: var(--fonte-num); font-variant-numeric: tabular-nums; }
 .tabela-porte .destaque { font-weight: 700; color: var(--tinta); }
+.tabela-fontes .destaque { font-weight: 700; color: var(--tinta); font-family: var(--fonte-num); }
 .prova-intro { margin-bottom: 0.625rem; }
 .prova-obs { font-size: 0.875rem; }
+
+.pendente-marca {
+  display: inline-block; font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.03em;
+  color: var(--c-prev); border: 1px solid var(--c-prev); border-radius: var(--raio);
+  padding: 0.0625rem 0.375rem; margin-left: 0.25rem; vertical-align: 0.0625rem;
+}
 
 .tabela-fontes { width: 100%; border-collapse: collapse; margin: 0 0 1.25rem; }
 .tabela-fontes caption {
@@ -449,12 +462,12 @@ tr[data-linha="bolsa_familia"]   { --cor: var(--c-bf); }
 
 .chamada .busca { margin-top: 0; }
 .chamada-alt { margin: 0.75rem 0 0; }
-.botao {
+a.botao {
   display: inline-block; padding: 0.5rem 1rem; font-size: 0.875rem; font-weight: 600;
   color: var(--papel); background: var(--destaque);
   border-radius: var(--raio); text-decoration: none;
 }
-.botao:hover { opacity: 0.9; }
+a.botao:hover { opacity: 0.9; }
 
 .feitura .links { display: flex; flex-wrap: wrap; gap: 1.25rem; }
 .rodape {
@@ -480,6 +493,42 @@ tr[data-linha="bolsa_familia"]   { --cor: var(--c-bf); }
 .area { stroke: var(--papel); stroke-width: 0.25; }
 .area.apagado { opacity: 0.12; }
 .area.alvo { stroke: var(--destaque); stroke-width: 1.6; }
+
+/* ---------------------------------------------------------------- porta: blocos do roteiro */
+.bloco { margin: 2.5rem 0; }
+/* especificidade .bloco + .bloco-eyebrow de propósito: ".porta p" (classe+elemento) bate
+   uma classe solta em cima de <p>, e o rótulo virava do tamanho do texto normal. */
+.bloco .bloco-eyebrow {
+  font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em;
+  color: var(--tinta-fraca); margin: 0 0 0.5rem; max-width: none;
+}
+.bloco h2 { font-size: 1.5rem; line-height: 1.3; margin: 0 0 0.75rem; max-width: 38rem; letter-spacing: -0.01em; }
+.bloco p { max-width: 38rem; }
+
+.mapa-caixa { border: 1px solid var(--linha-forte); border-radius: var(--raio); overflow: hidden; background: var(--papel); }
+.mapa-caixa svg { display: block; width: 100%; height: auto; }
+.mapa-caixa .mapa-legenda {
+  display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; margin: 0; padding: 0.875rem 1rem;
+  border-top: 1px solid var(--linha); font-size: 0.8125rem; max-width: none;
+}
+.mapa-legenda span { display: inline-flex; align-items: center; gap: 0.4375rem; }
+.mapa-legenda strong { font-family: var(--fonte-num); }
+.ponto { width: 0.625rem; height: 0.625rem; border-radius: 50%; flex: none; display: inline-block; }
+
+.bloco .como-ler {
+  font-size: 0.8125rem; color: var(--tinta-fraca); margin: 0.875rem 0 0;
+  padding-left: 0.75rem; border-left: 2px solid var(--linha-forte); max-width: 38rem;
+}
+
+.radar-caixa { max-width: 26rem; margin: 0 auto; }
+.marcador-cidade circle:first-child {
+  animation: radar-pulso 2.2s ease-out infinite; transform-origin: center; transform-box: fill-box;
+}
+@keyframes radar-pulso {
+  0%   { r: 4; opacity: 0.9; }
+  100% { r: 22; opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .marcador-cidade circle:first-child { animation: none; } }
 
 /* tabela de participações dentro da dica */
 .dica-linhas { border-collapse: collapse; margin-top: 0.375rem; width: 100%; }

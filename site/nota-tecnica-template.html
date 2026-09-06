@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nota técnica — Folha de Pagamento dos Municípios</title>
+<meta name="description" content="Metodologia da Folha de Pagamento dos Municípios: fontes, definições, agregação, validação e limitações.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' rx='2' fill='%230f172a'/><path d='M4 3.5h8v9l-1.3-1-1.35 1-1.35-1-1.35 1-1.35-1L4 12.5z' fill='%23f8fafc'/><path d='M5.8 6h4.4M5.8 8h4.4M5.8 10h2.6' stroke='%230f172a' stroke-width='.9' stroke-linecap='round'/></svg>">
+  <link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<div class="envelope porta">
+
+  <p class="migalha" style="margin:0 0 1rem; font-size:0.8125rem;"><a href="index.html">Folha de Pagamento dos Municípios</a> / Nota técnica</p>
+
+  <header class="topo">
+    <h1>Nota técnica</h1>
+    <p class="linha-fina">Como os quatro números de cada município foram apurados, o que eles
+      significam e o que ainda não sabemos direito.</p>
+  </header>
+
+  <div class="regra" role="note" style="margin-bottom:2rem;">
+    <h3>Estado deste documento</h3>
+    <p>Esta é a versão de trabalho da nota técnica, referente a <!--REFERENCIA-->. As seções
+      1 a 5 e 7 e 8 descrevem decisões já fechadas do pipeline. A seção 6 lista, de forma
+      explícita, os pontos que ainda dependem de revisão metodológica — marcados com
+      <span class="pendente-marca">em revisão</span> — e serão fechados antes da submissão
+      final.</p>
+  </div>
+
+  <section class="motivo" aria-labelledby="s1">
+    <h2 id="s1">1. Objetivo e perguntas que o painel responde</h2>
+    <p>O painel decompõe a renda registrada de cada um dos 5.570 municípios brasileiros em
+      quatro fontes — salário do setor privado, folha da administração pública, previdência
+      (INSS e BPC) e Bolsa Família — no mesmo mês de referência, para dois usos:</p>
+    <p><strong>Gestão municipal:</strong> entender de onde vem o dinheiro que circula na própria
+      cidade, e o quanto disso está sujeito a decisões tomadas fora dela.</p>
+    <p><strong>Formulação de política:</strong> saber, antes de mudar uma regra — o fator
+      previdenciário, o valor do Bolsa Família, o teto de gasto com pessoal de uma prefeitura —
+      quais municípios são mais expostos a essa mudança, e em que grau.</p>
+  </section>
+
+  <section class="ficha" aria-labelledby="s2">
+    <h2 id="s2">2. Fontes de dados</h2>
+    <table class="tabela-fontes">
+      <caption>Mês de referência: <strong><!--REFERENCIA--></strong>. Todas as fontes são
+        dados abertos federais, de atualização mensal (RAIS é anual).</caption>
+      <thead>
+        <tr><th scope="col">Linha</th><th scope="col">Fonte</th><th scope="col">Unidade</th><th scope="col">Granularidade original</th></tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row">Salário — setor privado</th><td>RAIS 2025 (microdados PDET)</td><td>vínculo</td><td>município do estabelecimento</td></tr>
+        <tr><th scope="row">Salário — administração pública</th><td>RAIS 2025, por natureza jurídica</td><td>vínculo</td><td>município do estabelecimento</td></tr>
+        <tr><th scope="row">Previdência — INSS e BPC</th><td>INSS, benefícios emitidos</td><td>benefício</td><td>município de residência</td></tr>
+        <tr><th scope="row">Benefício social — Bolsa Família</th><td>Portal da Transparência</td><td>família</td><td>município (código SIAFI)</td></tr>
+        <tr><th scope="row">Tamanho médio de família</th><td>CadÚnico, via SAGI/MDS</td><td>—</td><td>município</td></tr>
+        <tr><th scope="row">Denominador populacional</th><td>DATASUS POPSVS</td><td>pessoa</td><td>idade ano a ano, por município</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:0.875rem">O processamento é aberto e reproduzível: três scripts
+      (<code>01_bronze.py</code>, <code>02_silver.py</code>, <code>03_gold.py</code>) baixam os
+      arquivos originais, normalizam cada fonte para o código de município do IBGE e montam o
+      painel — descritos em detalhe no <a href="https://github.com/jorgel-mendes/folha-pagamento-municipios/blob/main/pipeline/README.md">README do pipeline</a>.
+      Todas as fontes usam código de município diferente entre si; o de-para do INSS resolve
+      99,2% dos casos automaticamente, e o restante está documentado numa tabela de alias.</p>
+  </section>
+
+  <section class="ficha" aria-labelledby="s3">
+    <h2 id="s3">3. Definições e unidades</h2>
+    <p><strong>Vínculo, benefício e família não são a mesma coisa.</strong> A RAIS conta
+      vínculos de trabalho — uma pessoa com dois empregos formais gera dois vínculos. O INSS
+      conta benefícios emitidos — um segurado com aposentadoria e pensão por morte soma dois. O
+      Bolsa Família conta famílias, não indivíduos. Por isso o painel nunca soma as colunas de
+      contagem entre fontes, e o total de pessoas simplesmente não existe no JSON publicado —
+      calcular esse número exigiria uma taxa de acumulação (quantos vínculos por pessoa, quantos
+      benefícios por segurado) que ainda não localizamos numa fonte oficial nacional
+      <span class="pendente-marca">em revisão</span>.</p>
+    <p><strong>"Por 100 adultos"</strong> é a contagem de cada fonte dividida pela população de
+      18 anos ou mais do município, vezes 100. Esse número pode superar 100 — e isso não é erro:
+      é a mesma pessoa aparecendo em mais de uma fonte, ou mais de um vínculo por pessoa,
+      exibido honestamente em vez de escondido.</p>
+    <p><strong>Massa em reais é somável entre as quatro fontes.</strong> Cada uma representa um
+      fluxo de dinheiro distinto, decidido por um agente diferente (uma empresa, a prefeitura, o
+      INSS, o governo federal). Um aposentado que também trabalha com carteira assinada contribui
+      às duas massas, e isso está correto: o dinheiro circulou duas vezes na economia do
+      município.</p>
+  </section>
+
+  <section class="ficha" aria-labelledby="s4">
+    <h2 id="s4">4. Método de agregação e denominadores</h2>
+    <p><strong>Mês de referência: dezembro de 2025.</strong> Usamos a remuneração média de
+      dezembro da RAIS — o padrão dos relatórios do PDET — em vez de dividir a remuneração anual
+      por doze, o que evitaria o 13º salário. A <em>massa</em> soma todos os vínculos, sem corte;
+      o corte de <strong>0,7 a 30 salários mínimos</strong> (R$ 1.062,60 a R$ 45.540,00, com o
+      salário mínimo de 2025 em R$ 1.518,00) vale só para o cálculo do <em>valor médio</em>,
+      seguindo o parâmetro da própria RAIS. A referência exata dessa faixa na documentação
+      pública do PDET/MTE ainda não foi localizada <span class="pendente-marca">em revisão</span> —
+      sem essa citação, é um número que pode ser questionado.</p>
+    <p><strong>Vínculos abandonados foram excluídos</strong> — 1,07% dos vínculos ativos da
+      RAIS, todos com remuneração zero, provavelmente trabalhadores que saíram sem rescisão
+      formal registrada. Eles não afetam a massa (já eram zero), mas inflavam a contagem de
+      pessoas, que é o denominador do salário médio e da taxa por 100 adultos.</p>
+    <p><strong>A folha pública usa a remuneração média do ano, não a de dezembro.</strong> É a
+      única exceção à regra de "dezembro para tudo", e o motivo é concreto: o campo de
+      remuneração de dezembro da RAIS vem vazio em <strong>50,4%</strong> dos vínculos federais
+      e <strong>38,0%</strong> dos estaduais — contra 9,3% no setor privado. Vínculo
+      estatutário aparentemente não preenche esse campo com o mesmo rigor que vínculo
+      celetista. Usando só dezembro, a massa pública nacional saía subestimada em cerca de
+      <strong>R$ 4,5 bilhões por mês</strong> (6,8% da linha), concentrados exatamente nas
+      cidades com maior peso de funcionalismo estadual e federal — capitais, sobretudo. Por
+      isso a massa e a participação da folha pública usam a remuneração média do ano
+      (`salario_publico_massa`, derivada do campo `Vl Remun Média` da própria RAIS); o valor
+      médio por vínculo continua vindo da base filtrada de dezembro entre 0,7 e 30 salários
+      mínimos, sem mudança. O salário privado permanece em dezembro, que é o padrão do PDET e
+      não sofre desse problema de preenchimento. Essa troca muda a fonte dominante de 127
+      municípios (2,3% do total) no mapa — o achado nacional (previdência domina 62% das
+      cidades) não se move, mas duas capitais de estado trocam de cor: Salvador passa de
+      salário privado para folha pública, e Goiânia, o inverso.</p>
+    <p><strong>Mesmo corrigida, a folha pública provavelmente ainda está subestimada</strong>
+      <span class="pendente-marca">em revisão</span> — em graus diferentes por cidade. Depois
+      da troca para a remuneração média do ano, dá para comparar a massa pública contra o que
+      seria esperado (vínculos × valor médio) e ver quanto ainda falta: no Rio de Janeiro, a
+      massa corrigida chega a 68% do esperado — ainda incompleta, mas razoável. Em
+      <strong>Brasília, o caso mais extremo</strong>, chega a só <strong>37%</strong>. A
+      explicação provável é a mesma de antes, só que mais forte: Brasília não tem esfera
+      municipal — é 100% estadual e federal, exatamente as duas categorias com o pior
+      preenchimento — então uma fração grande de vínculos, sobretudo federais, segue sem
+      nenhum valor de remuneração atribuído em nenhum dos dois campos da RAIS, não só no de
+      dezembro. Não identificamos, nos dados que temos, uma terceira fonte que feche essa
+      lacuna (dependeria de outro campo da RAIS ou de uma base de folha de pagamento como o
+      SIAPE). Na prática, isso quer dizer que a folha pública de Brasília — e, em menor grau,
+      a de outras capitais com forte presença federal ou estadual — deve ser lida como um
+      piso, não como o valor real.</p>
+    <p><strong>De-para de município:</strong> cada fonte usa um código próprio — INSS usa código
+      e nome truncado em 11 caracteres, Bolsa Família usa o código SIAFI, RAIS e CadÚnico usam o
+      prefixo de 6 dígitos do IBGE. O de-para do INSS combina UF, prefixo numérico e uma tabela
+      de alias para grafias antigas (ex.: Mogi das Cruzes, Paraty, Açu); o do Bolsa Família usa
+      similaridade textual (Jaro-Winkler ≥ 0,85) restrita à mesma UF. Ambos os processos estão
+      auditados: o log de casamento aproximado registra cada correspondência com o seu escore.</p>
+  </section>
+
+  <section class="ficha" aria-labelledby="s5">
+    <h2 id="s5">5. Validação</h2>
+    <p>O painel foi conferido contra o agregado oficial nacional do INSS, a única das quatro
+      fontes com um total público independente e diretamente comparável:</p>
+    <table class="tabela-fontes">
+      <thead>
+        <tr><th scope="col"></th><th scope="col">Quantidade</th><th scope="col">Valor</th></tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row">Agregado oficial do INSS</th><td>41.637.785</td><td>R$ 74,19 bi</td></tr>
+        <tr><th scope="row">Painel + não alocado a município</th><td>41.641.943</td><td>R$ 74,19 bi</td></tr>
+        <tr><th scope="row">Desvio</th><td colspan="2" class="destaque">+0,0100%</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:0.875rem">Do total, 457.686 benefícios (1,10%) não puderam ser
+      alocados a um município e ficam de fora do painel — não são descartados silenciosamente,
+      aparecem contabilizados aqui como diferença explícita. Cobertura por fonte: a RAIS, o
+      Bolsa Família, a população e o CadÚnico têm dado em todos os 5.571 municípios; o INSS falta
+      em apenas 2. Um município sem dado numa fonte aparece como travessão no site — nunca como
+      zero, que seria uma afirmação diferente e falsa. Em nenhum dos 5.571 municípios as quatro
+      participações deixam de somar 100%.</p>
+  </section>
+
+  <section class="ficha" aria-labelledby="s6">
+    <h2 id="s6">6. Limitações e pontos em revisão</h2>
+    <p>Isto é a renda <strong>registrada e rastreável</strong> em dados públicos federais — não a
+      renda total da população. Ficam de fora, sem estimativa de magnitude ainda anexada: trabalho
+      informal, renda de capital, aluguel, agricultura de subsistência, os regimes próprios de
+      previdência de estados e municípios, e as transferências estaduais e municipais de renda.</p>
+    <p><strong>Assimetria geográfica</strong> — a RAIS localiza o vínculo no município do
+      <em>estabelecimento</em>; o INSS, no município de <em>residência</em>. Em regiões
+      metropolitanas isso desloca massa salarial da cidade-dormitório para a cidade-polo,
+      enquanto a massa previdenciária permanece na cidade-dormitório — um efeito sistemático que
+      pode sugerir, incorretamente, que periferias "dependem" de transferências mais do que
+      efetivamente dependem.</p>
+
+    <div class="limites" style="margin-top:1.25rem">
+      <h3>Três pontos ainda em revisão metodológica <span class="pendente-marca">em revisão</span></h3>
+      <p><strong>Líquido vs. bruto.</strong> O INSS publica valor <em>líquido</em> de benefício
+        (já descontados consignado e imposto de renda); a RAIS publica remuneração
+        <em>bruta</em>. O painel soma os dois hoje, tal como publicados. A magnitude do desconto
+        do consignado é da ordem de dezenas de bilhões de reais por ano no total nacional — não é
+        desprezível, e a forma correta de tratar essa mistura ainda está em avaliação.</p>
+      <p><strong>Competência do Bolsa Família.</strong> O arquivo de dezembro do Portal da
+        Transparência mistura parcelas pagas em dezembro mas referentes a meses anteriores. O
+        pipeline calcula as duas leituras — famílias com benefício <em>referente</em> a dezembro,
+        e dinheiro que efetivamente <em>entrou</em> no município em dezembro — e usa a primeira
+        por padrão; a diferença entre as duas é da ordem de R$ 127 milhões por mês no total
+        nacional.</p>
+      <p><strong>Vínculo ativo sem remuneração.</strong> Vínculos abandonados (remuneração zero)
+        já foram excluídos da contagem de pessoas. Uma parcela menor dos vínculos restantes
+        também tem remuneração zero ou muito baixa por outros motivos — afastamento, licença,
+        admissão em 31 de dezembro. Falta decidir se esses casos contam como "pessoa com renda
+        formal" no contracheque do município.</p>
+    </div>
+  </section>
+
+  <section class="ficha" aria-labelledby="s7">
+    <h2 id="s7">7. Notas de interpretação</h2>
+    <p>O painel permite comparar municípios pela composição da própria renda registrada, e
+      identificar quais estão mais expostos a uma mudança de regra em cada uma das quatro
+      fontes. Ele <strong>não permite</strong> concluir que um município "depende" no sentido
+      de não ter alternativa, nem comparar o bem-estar entre municípios — isso exigiria dados de
+      custo de vida, informalidade e patrimônio que não fazem parte deste painel.</p>
+    <p>Por isso o vocabulário do projeto é sempre <strong>exposição</strong>, nunca
+      <em>dependência</em> ou <em>vulnerabilidade</em>. E a defesa contra leitura política
+      enviesada é estrutural, não retórica: todo recorte que mostra exposição ao Bolsa Família
+      tem, com o mesmo destaque e o mesmo clique, o equivalente para a folha da prefeitura e
+      para o salário privado. Um painel que responde igualmente bem "quais municípios são mais
+      afetados se mexer no Bolsa Família" e "quais são mais afetados se mexer na folha pública"
+      não tem lado — tem método.</p>
+  </section>
+
+  <section class="ficha" aria-labelledby="s8">
+    <h2 id="s8">8. Referências</h2>
+    <ul style="padding-left:1.25rem; margin:0;">
+      <li>RAIS 2025 — microdados via PDET/MTE.</li>
+      <li>INSS — Painel de Benefícios / dados abertos.</li>
+      <li>Portal da Transparência — Bolsa Família.</li>
+      <li>CadÚnico, via SAGI/MDS.</li>
+      <li>IBGE/DATASUS — POPSVS, população por município e idade.</li>
+      <li>2º Concurso de Reúso de Dados Abertos da CGU — Edital nº 46, de 19/06/2026.</li>
+    </ul>
+    <p style="margin-top:0.875rem"><a href="https://github.com/jorgel-mendes/folha-pagamento-municipios">Repositório e pipeline completo no GitHub</a>, sob licença MIT.</p>
+  </section>
+
+  <footer class="rodape">
+    <p>Jorge Mendes e Leonardo Mendes. Dados de referência: <!--REFERENCIA-->.</p>
+  </footer>
+
+</div>
+</body>
+</html>

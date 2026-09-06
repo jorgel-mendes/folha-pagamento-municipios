@@ -10,7 +10,7 @@ mostra conteudo real sem JavaScript. O app.js depois so troca os valores dentro 
 estrutura ja existente -- nao existe markup duplicado entre Python e JavaScript.
 
 Uso:
-    uv run site/build.py [--municipio 3550308]
+    uv run site/build.py [--municipio 2927408]
 """
 from __future__ import annotations
 
@@ -20,8 +20,32 @@ import json
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import gera_graficos
+import gera_mapa
+
 AQUI = Path(__file__).resolve().parent
-PADRAO = "3550308"  # Sao Paulo: o maior, reconhecivel e sem carga narrativa
+PADRAO = "2927408"  # Salvador: capital, reconhecivel, cidade destacada na porta de entrada
+EXEMPLO = "2921054"  # Matina (BA): previdencia dominante sem casos extremos -- ver CONTEXTO.md
+
+NOMES_FONTE = {
+    "previdencia": "a Previdência",
+    "salario_privado": "o salário do setor privado",
+    "salario_publico": "a folha da administração pública",
+    "bolsa_familia": "o Bolsa Família",
+}
+NOMES_FONTE_SEM_ARTIGO = {
+    "previdencia": "Previdência",
+    "salario_privado": "salário do setor privado",
+    "salario_publico": "folha da administração pública",
+    "bolsa_familia": "Bolsa Família",
+}
+NOMES_FONTE_DE = {  # "de" + artigo já contraído: participação DA Previdência, DO Bolsa Família
+    "previdencia": "da Previdência",
+    "salario_privado": "do salário do setor privado",
+    "salario_publico": "da folha da administração pública",
+    "bolsa_familia": "do Bolsa Família",
+}
 
 # (chave, rotulo, fonte). A ordem e a do contracheque e nunca muda.
 LINHAS = [
@@ -97,7 +121,11 @@ def linha_html(chave: str, rotulo: str, fonte: str, d: dict | None) -> str:
             + celula("Participação", "reais", barra) + "</tr>")
 
 
-def contracheque(mun: dict, dados: dict) -> str:
+def contracheque(mun: dict, dados: dict, interativo: bool = True) -> str:
+    """`interativo=False` omite os botões Reais/Pessoas -- para usos fora do painel
+    (como a porta de entrada), onde não existe id="holerite" e o app.js não os liga
+    a nenhum comportamento. Um botão que não faz nada é pior do que não ter botão.
+    """
     ano, mes = dados["ref"].split("-")
     competencia = f"{MESES[int(mes) - 1]} de {ano}"
     nome = html.escape(mun["nome"])
@@ -107,6 +135,14 @@ def contracheque(mun: dict, dados: dict) -> str:
     bf_pessoas = linhas.get("bolsa_familia", {}).get("pessoas")
     nota_bf = (f' No município, <span data-v="bf-pessoas">{num(bf_pessoas)}</span> pessoas vivem '
                f'em famílias que recebem o Bolsa Família.' if bf_pessoas else "")
+
+    modos = """
+      <div class="modos">
+        <span class="rotulo" id="rot-modo">Destacar</span>
+        <button type="button" data-modo="reais" aria-pressed="true" aria-describedby="rot-modo">Reais</button>
+        <button type="button" data-modo="pessoas" aria-pressed="false" aria-describedby="rot-modo">Pessoas</button>
+      </div>
+""" if interativo else ""
 
     return f"""
       <div class="holerite-topo">
@@ -119,13 +155,7 @@ def contracheque(mun: dict, dados: dict) -> str:
         </div>
         <p class="holerite-competencia">Competência<strong data-v="competencia">{competencia}</strong></p>
       </div>
-
-      <div class="modos">
-        <span class="rotulo" id="rot-modo">Destacar</span>
-        <button type="button" data-modo="reais" aria-pressed="true" aria-describedby="rot-modo">Reais</button>
-        <button type="button" data-modo="pessoas" aria-pressed="false" aria-describedby="rot-modo">Pessoas</button>
-      </div>
-
+{modos}
       <table class="linhas">
         <caption>Cada fonte conta em uma unidade diferente, indicada na coluna Pessoas.
           Vínculos, benefícios e famílias não são a mesma coisa e não devem ser somados.</caption>
@@ -201,6 +231,39 @@ def achado(est: dict) -> str:
             f"isolada de renda em <strong>{proporcao(n_maior, n_total)}</strong> dos municípios do Norte.")
 
 
+def percentil(dados: dict, chave: str, valor: float) -> float:
+    """Quantos % dos municípios com dado têm participação menor que `valor` nesta fonte."""
+    vals = sorted((d["linhas"].get(chave) or {}).get("part", 0)
+                  for d in dados.values() if d.get("massa_total"))
+    if not vals:
+        return 0.0
+    abaixo = sum(1 for v in vals if v < valor)
+    return 100 * abaixo / len(vals)
+
+
+def mapa_headline(stats_brasil: list) -> str:
+    chave, _contagem, pct = stats_brasil[0]
+    return (f"Em <strong>{num(pct, 0)}% das cidades do Brasil</strong>, é {NOMES_FONTE[chave]} "
+            f"que movimenta mais dinheiro do que qualquer outra fonte.")
+
+
+def mapa_legenda(stats_brasil: list) -> str:
+    rotulo = {chave: rot for chave, rot, _fonte in LINHAS}
+    cor = {"salario_privado": "var(--c-privado)", "salario_publico": "var(--c-publico)",
+           "previdencia": "var(--c-prev)", "bolsa_familia": "var(--c-bf)"}
+    itens = "\n".join(
+        f'        <span><i class="ponto" style="background:{cor[chave]}"></i>'
+        f'<strong>{num(pct, 0)}%</strong>&nbsp;{html.escape(rotulo[chave])}</span>'
+        for chave, _contagem, pct in stats_brasil)
+    return f'      <p class="mapa-legenda">\n{itens}\n      </p>'
+
+
+def uf_destaque(stats_uf: list, uf: str) -> str:
+    chave, _contagem, pct = stats_uf[0]
+    return (f"um estado onde {NOMES_FONTE[chave]} já domina "
+            f"<strong>{num(pct, 0)}%</strong> das cidades")
+
+
 def tabela_porte(est: dict) -> str:
     corpo = "\n".join(
         f'        <tr><th scope="row">{rot}</th>'
@@ -225,6 +288,8 @@ def main() -> None:
     dados = json.loads((AQUI / "dados.json").read_text("utf-8"))
     if alvo not in indice or alvo not in dados:
         raise SystemExit(f"município {alvo} não está nos dados -- rode pipeline/03_gold.py antes")
+    if EXEMPLO not in indice or EXEMPLO not in dados:
+        raise SystemExit(f"cidade-exemplo {EXEMPLO} não está nos dados -- rode pipeline/03_gold.py antes")
 
     # Carimbo de versão nos assets. Sem isto, navegador e CDN do GitHub Pages seguem
     # servindo o CSS e o JS antigos depois de uma republicação -- o que já custou uma
@@ -247,19 +312,62 @@ def main() -> None:
     ref = dados[alvo]["ref"]
     referencia = f"{MESES[int(ref[5:7]) - 1]} de {ref[:4]}"
 
+    # Mapa (Brasil inteiro + zoom no estado da cidade-exemplo) e os outros dois
+    # graficos do painel (enxame e plano), gerados direto dos dados -- sem navegador,
+    # sem D3 -- e embutidos como SVG estatico, do mesmo jeito que o contracheque.
+    topo = json.loads((AQUI / "malha.topojson").read_text("utf-8"))
+    exemplo_uf = indice[EXEMPLO]["uf"]
+    svg_brasil, stats_brasil, svg_uf, stats_uf = gera_mapa.gerar(
+        topo, dados, indice, EXEMPLO, exemplo_uf)
+    svg_enxame = gera_graficos.gera_enxame(dados, indice, EXEMPLO)
+    svg_plano, _contagem_plano = gera_graficos.gera_plano(dados, indice, EXEMPLO)
+
+    exemplo_chave = gera_mapa.dominante(dados[EXEMPLO]["linhas"])
+    exemplo_valor = (dados[EXEMPLO]["linhas"].get(exemplo_chave) or {}).get("part", 0)
+    exemplo_percentil = percentil(dados, exemplo_chave, exemplo_valor)
+    exemplo_nome = f'{indice[EXEMPLO]["nome"]} ({indice[EXEMPLO]["uf"]})'
+
     n_porta = monta("inicio-template.html", "index.html", {
         "<!--ACHADO-->": achado(est),
         "<!--TABELA-PORTE-->": tabela_porte(est),
         "<!--REFERENCIA-->": referencia,
+        "<!--MAPA-BRASIL-->": svg_brasil,
+        "<!--MAPA-HEADLINE-->": mapa_headline(stats_brasil),
+        "<!--MAPA-FONTE-DOMINANTE-->": NOMES_FONTE_DE[stats_brasil[0][0]],
+        "<!--MAPA-LEGENDA-->": mapa_legenda(stats_brasil),
+        "<!--MAPA-UF-->": svg_uf,
+        "<!--EXEMPLO-NOME-->": html.escape(indice[EXEMPLO]["nome"]),
+        "<!--EXEMPLO-UF-->": indice[EXEMPLO]["uf"],
+        "<!--EXEMPLO-POP-->": num(indice[EXEMPLO]["pop"]),
+        "<!--EXEMPLO-UF-DESTAQUE-->": uf_destaque(stats_uf, exemplo_uf),
+        "<!--CONTRACHEQUE-EXEMPLO-->": contracheque(indice[EXEMPLO], dados[EXEMPLO], interativo=False),
+        "<!--GRAF-ENXAME-->": svg_enxame,
+        "<!--GRAF-ENXAME-LEGENDA-->": (
+            f"Cada ponto é um município, na posição da sua participação "
+            f"{NOMES_FONTE_DE[exemplo_chave]}. O ponto branco mostra {exemplo_nome}: "
+            f"{num(exemplo_valor*100, 1)}%, mais alto que {num(exemplo_percentil, 0)}% "
+            f"das cidades do país."),
+        "<!--GRAF-PLANO-->": svg_plano,
+        "<!--GRAF-PLANO-LEGENDA-->": (
+            f"Cada município fica no quadrante da fonte que mais pesa nele; quanto mais "
+            f"perto da borda, mais essa fonte domina. Em {exemplo_nome}, "
+            f"{NOMES_FONTE_SEM_ARTIGO[exemplo_chave]} responde por "
+            f"{num(exemplo_valor*100, 1)}% da renda registrada — por isso o ponto aparece "
+            f"perto da borda, quase sem disputa das outras três fontes."),
     })
     n_painel = monta("painel-template.html", "painel.html", {
         "<!--CONTRACHEQUE-->": contracheque(indice[alvo], dados[alvo]),
     }, atributos=f' data-padrao="{alvo}"')
+    n_nota = monta("nota-tecnica-template.html", "nota-tecnica.html", {
+        "<!--REFERENCIA-->": referencia,
+    })
 
     maior, total = est["porte"]["ate_5k"]
     print(f"versao dos assets: {versao}")
     print(f"index.html   porta de entrada - {n_porta:,} bytes "
-          f"(ate 5 mil hab.: {maior}/{total} = {proporcao(maior, total)})")
+          f"(ate 5 mil hab.: {maior}/{total} = {proporcao(maior, total)}) "
+          f"-- cidade-exemplo: {exemplo_nome}")
+    print(f"nota-tecnica.html - {n_nota:,} bytes")
     print(f"painel.html  {indice[alvo]['nome']} ({indice[alvo]['uf']}) "
           f"pre-renderizado - {n_painel:,} bytes")
 

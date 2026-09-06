@@ -21,46 +21,83 @@
     <h1>Folha de Pagamento dos Municípios</h1>
     <p class="linha-fina">Quando muda uma regra — do INSS, do Bolsa Família, do teto de
       pessoal de uma prefeitura — o efeito não chega igual em todo lugar.</p>
-
-    <p class="achado"><!--ACHADO--></p>
   </header>
 
-  <section class="motivo" aria-labelledby="motivo-titulo">
-    <h2 id="motivo-titulo">Por que fizemos isso</h2>
+  <!-- 1. MAPA DO BRASIL — qual fonte domina a maioria das cidades -->
+  <section class="bloco" aria-labelledby="t-mapa">
+    <p class="bloco-eyebrow">5.570 cidades, olhadas de uma vez</p>
+    <h2 id="t-mapa"><!--MAPA-HEADLINE--></h2>
+    <p>Na maior parte do país não é o salário de quem trabalha numa empresa privada, nem a
+      folha da prefeitura, nem o Bolsa Família. Cada município no mapa abaixo está pintado pela
+      fonte que mais pesa na sua renda registrada, e uma cor só — <!--MAPA-FONTE-DOMINANTE-->
+      — domina o território inteiro.</p>
 
-    <p>A renda de uma cidade brasileira não vem de um lugar só. Vem do salário de quem tem
-      carteira assinada, da folha da prefeitura e dos órgãos públicos, da aposentadoria de quem
-      já trabalhou, e do benefício social de quem precisa. São quatro fluxos de dinheiro
-      diferentes, com regras diferentes, decididas por gente diferente.</p>
-
-    <p>Esses quatro números existem, são públicos e são atualizados todo mês. Mas vivem em
-      quatro bases que não conversam entre si: a RAIS fala de vínculos de trabalho, o INSS fala
-      de benefícios emitidos, o Portal da Transparência fala de famílias, o CadÚnico fala de
-      pessoas cadastradas. Cada uma usa um código de município diferente do IBGE. Juntar isso dá
-      trabalho — e é por isso que quase ninguém junta.</p>
-
-    <p>A consequência prática é que <strong>quem decide costuma decidir sem o mapa</strong>.
-      Uma mudança na regra do Bolsa Família, no fator previdenciário ou no limite de gasto com
-      pessoal de uma prefeitura chega a lugares muito diferentes, com intensidades muito
-      diferentes. Quem administra um município raramente sabe qual é o seu caso. Quem escreve a
-      regra raramente sabe quantos municípios estão do outro lado dela.</p>
-
-    <p>Esta página junta as quatro fontes num único lugar, para os 5.570 municípios, no mesmo
-      mês de referência. É isso — e o cuidado de não somar o que não pode ser somado.</p>
+    <div class="mapa-caixa">
+      <!--MAPA-BRASIL-->
+<!--MAPA-LEGENDA-->
+    </div>
+    <p class="como-ler">Como ler: a cor é só a fonte <em>maior</em> — as outras três continuam
+      existindo ali, só que pesam menos. Dados de <!--REFERENCIA-->, para os municípios com
+      informação nas quatro fontes.</p>
   </section>
 
-  <section class="prova" aria-labelledby="prova-titulo">
-    <h2 id="prova-titulo">Quanto isso pesa, por tamanho de cidade</h2>
-    <p class="prova-intro">Municípios em que aposentadorias e Bolsa Família, somados,
-      movimentam mais dinheiro que toda a massa salarial do setor privado:</p>
-    <!--TABELA-PORTE-->
-    <p class="prova-obs">Quanto menor a cidade, mais a renda registrada depende de dinheiro que
-      é decidido em Brasília. Nas maiores, o salário privado domina. Não é um julgamento sobre
-      nenhum dos dois — é o mapa de onde cada decisão chega.</p>
+  <!-- 2. QUANTO MENOR A CIDADE, MAIS PESA -->
+  <section class="bloco" aria-labelledby="t-pequenas">
+    <p class="bloco-eyebrow">Quanto menor a cidade, mais isso pesa</p>
+    <h2 id="t-pequenas">Em cidades pequenas, previdência e Bolsa Família já superam todo o
+      salário privado</h2>
+    <p><!--ACHADO--></p>
+<!--TABELA-PORTE-->
+    <p class="como-ler">Quanto menor a cidade, mais a renda registrada depende de dinheiro
+      que é decidido em Brasília. Nas maiores, o salário privado domina. Não é um julgamento
+      sobre nenhum dos dois — é o mapa de onde cada decisão chega.</p>
   </section>
 
-  <section class="chamada" aria-labelledby="chamada-titulo">
-    <h2 id="chamada-titulo">Veja o seu município</h2>
+  <!-- 3. ZOOM — uma cidade de exemplo -->
+  <section class="bloco" aria-labelledby="t-radar" style="text-align:center">
+    <p class="bloco-eyebrow">Vamos até um desses pontos</p>
+    <h2 id="t-radar" style="max-width:none"><!--EXEMPLO-NOME-->, <!--EXEMPLO-UF--></h2>
+    <p style="max-width:30rem; margin-left:auto; margin-right:auto;"><!--EXEMPLO-POP-->
+      habitantes, no interior — <!--EXEMPLO-UF-DESTAQUE-->.</p>
+    <div class="radar-caixa">
+      <div class="mapa-caixa" style="border:0; background:transparent;">
+        <!--MAPA-UF-->
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. A FOLHA DE PAGAMENTO DA CIDADE + OS OUTROS DOIS GRÁFICOS -->
+  <section class="bloco" aria-labelledby="t-folha">
+    <p class="bloco-eyebrow">A folha de pagamento da cidade, mês a mês</p>
+    <h2 id="t-folha">De onde vem a renda registrada de <!--EXEMPLO-NOME--></h2>
+    <p>As quatro fontes são dinheiro real e mensurável, mesmo quando a fatia em porcentagem é
+      pequena. Por isso a tabela abaixo traz o valor em reais — coluna "Massa no mês" — ao lado
+      da participação: uma fonte que responde por só 2% da renda ainda pode ser centenas de
+      milhares de reais por mês.</p>
+
+    <section class="holerite" data-modo="reais">
+<!--CONTRACHEQUE-EXEMPLO-->
+    </section>
+
+    <p style="margin-top:1.5rem">São os mesmos dois gráficos que o painel completo usa para
+      responder "qual fonte manda aqui?" — só muda o desenho.</p>
+
+    <div class="bloco-eyebrow" style="margin-top:1.5rem">Distribuição — onde a cidade cai entre as 5.570</div>
+    <div class="mapa-caixa">
+      <!--GRAF-ENXAME-->
+    </div>
+    <p class="como-ler"><!--GRAF-ENXAME-LEGENDA--></p>
+
+    <div class="bloco-eyebrow" style="margin-top:1.5rem">Composição — qual fonte manda, e o quanto</div>
+    <div class="mapa-caixa" style="max-width:26rem; margin:0 auto;">
+      <!--GRAF-PLANO-->
+    </div>
+    <p class="como-ler"><!--GRAF-PLANO-LEGENDA--></p>
+  </section>
+
+  <!-- 5. CTA — escolha seu município -->
+  <section class="chamada" aria-labelledby="t-chamada">
+    <h2 id="t-chamada">E a sua cidade — qual cor ela seria no mapa?</h2>
     <div class="busca js-apenas">
       <label for="q">Buscar município</label>
       <input id="q" type="text" role="combobox" autocomplete="off"
@@ -112,6 +149,15 @@
     </div>
   </section>
 
+  <section class="ficha" aria-labelledby="nota-titulo">
+    <h2 id="nota-titulo">A nota técnica</h2>
+    <p>Por que dezembro e não outro mês. O que fazer quando o INSS publica valor líquido e a
+      RAIS publica bruto. Como um vínculo sem remuneração deveria contar. Cada escolha
+      metodológica por trás dos números está documentada — inclusive as que ainda não fechamos,
+      marcadas como tal.</p>
+    <p class="chamada-alt"><a class="botao" href="nota-tecnica.html">Ler a nota técnica</a></p>
+  </section>
+
   <section class="feitura" aria-labelledby="feitura-titulo">
     <h2 id="feitura-titulo">Como foi feito</h2>
     <p>Todo o processamento é aberto e reproduzível: três scripts que baixam os arquivos
@@ -126,8 +172,7 @@
   </section>
 
   <footer class="rodape">
-    <p>Iniciativa inscrita no 2º Concurso de Reúso de Dados Abertos da Controladoria-Geral da
-      União. Dados de referência: <!--REFERENCIA-->.</p>
+    <p>Jorge Mendes e Leonardo Mendes. Dados de referência: <!--REFERENCIA-->.</p>
   </footer>
 
 </div>

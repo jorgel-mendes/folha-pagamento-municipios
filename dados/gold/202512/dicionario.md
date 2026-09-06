@@ -14,7 +14,7 @@ Uma linha por município. Valores monetários em reais nominais do mês de refer
 | `salario_privado_part` | Salário — setor privado — participação na massa total | proporção |
 | `salario_privado_por100` | Salário — setor privado — por 100 adultos | taxa |
 | `salario_publico_n` | Salário — administração pública — contagem (RAIS) | **vinculos** |
-| `salario_publico_massa` | Salário — administração pública — massa mensal | R$ |
+| `salario_publico_massa` | Salário — administração pública — massa — remuneração média do ano (não a de dezembro; ver nota técnica) | R$ |
 | `salario_publico_medio` | Salário — administração pública — valor médio (base: 0.7 a 30.0 SM) | R$ / vinculo |
 | `salario_publico_part` | Salário — administração pública — participação na massa total | proporção |
 | `salario_publico_por100` | Salário — administração pública — por 100 adultos | taxa |
@@ -37,3 +37,5 @@ Uma linha por município. Valores monetários em reais nominais do mês de refer
 As colunas `_n` **não são comparáveis entre si e não devem ser somadas**. A RAIS conta vínculos, o INSS conta benefícios emitidos e o Bolsa Família conta famílias. Uma mesma pessoa pode aparecer em mais de uma fonte. As colunas `_por100` existem justamente para permitir leitura relativa sem induzir soma — elas podem ultrapassar 100 no conjunto, e isso não é erro.
 
 As colunas `_massa` **são** somáveis: representam fluxos de dinheiro distintos.
+
+`salario_publico_massa` usa a remuneração **média do ano** de cada vínculo, não a de dezembro como as demais linhas de salário. Motivo: o campo de remuneração de dezembro vem vazio em 50% dos vínculos federais e 38% dos estaduais na RAIS — estatutário não preenche esse campo tão bem quanto celetista. Detalhes na nota técnica.

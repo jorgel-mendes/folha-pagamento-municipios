@@ -27,7 +27,7 @@
     --fundo:       #0e0f11;
     --tinta:       #e8e6e3;
     --tinta-fraca: #a2a8b0;
-    --tinta-tenue: #6f757d;
+    --tinta-tenue: #7d838c;
     --linha:       #2a2e33;
     --linha-forte: #3d434a;
     --destaque:    #ffffff;
@@ -414,8 +414,8 @@ tr[data-linha="bolsa_familia"]   { --cor: var(--c-bf); }
 .porta h3 { font-size: 0.9375rem; margin: 0 0 0.375rem; }
 .porta p { font-size: 1rem; line-height: 1.6; margin: 0 0 0.875rem; color: var(--tinta-fraca); }
 .porta p strong { color: var(--tinta); font-weight: 600; }
-.porta a { color: var(--tinta); text-decoration-color: var(--linha-forte); text-underline-offset: 2px; }
-.porta a:hover { text-decoration-color: var(--tinta); }
+.envelope a { color: var(--tinta); text-decoration-color: var(--linha-forte); text-underline-offset: 2px; }
+.envelope a:hover { text-decoration-color: var(--tinta); }
 
 .tabela-porte { width: 100%; border-collapse: collapse; margin: 0 0 0.875rem; }
 .tabela-porte th, .tabela-porte td {

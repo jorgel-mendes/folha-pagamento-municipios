@@ -98,7 +98,6 @@ def linha_html(chave: str, rotulo: str, fonte: str, d: dict | None) -> str:
     ausente = d is None
     unidade = "" if ausente else UNIDADES.get(d["unidade"], d["unidade"])
     v_n     = "—" if ausente else num(d["n"])
-    v_por   = "—" if ausente else taxa(d["por100"])
     v_med   = "—" if ausente else "R$ " + num(d["medio"])
     v_massa = "—" if ausente else compacto(d["massa"])
     v_part  = "—" if ausente else pct(d["part"])
@@ -106,9 +105,12 @@ def linha_html(chave: str, rotulo: str, fonte: str, d: dict | None) -> str:
 
     cab = (f'<th scope="row"><span class="linha-nome">{html.escape(rotulo)}</span>'
            f'<span class="linha-fonte">{html.escape(fonte)}</span></th>')
+    # ordem no DOM fica "numero, unidade" (leitura natural no card do celular: "642.188
+    # vinculos"). No desktop o CSS inverte visualmente com column-reverse, pra unidade
+    # aparecer como rotulo na primeira linha -- senao, sem a coluna "Por 100 adultos" ao
+    # lado, fica so um numero solto no meio da caixa.
     pessoas = (f'<span class="valor" data-v="n">{v_n}</span>'
                f'<span class="unidade" data-v="unidade">{unidade}</span>')
-    por100 = f'<span class="valor" data-v="por100">{v_por}</span>'
     medio = f'<span class="valor" data-v="medio">{v_med}</span>'
     massa = f'<span class="valor" data-v="massa">{v_massa}</span>'
     barra = (f'<span class="barra"><i data-v="barra" style="width:{largura:.2f}%"></i></span>'
@@ -116,7 +118,7 @@ def linha_html(chave: str, rotulo: str, fonte: str, d: dict | None) -> str:
 
     attrs = f' data-ausente="sim" title="Sem dado publicado para este municipio nesta fonte"' if ausente else ""
     return (f'<tr data-linha="{chave}"{attrs}>{cab}'
-            + celula("Pessoas", "pessoas", pessoas) + celula("Por 100 adultos", "pessoas", por100)
+            + celula("Pessoas", "pessoas", pessoas)
             + celula("Valor médio", "reais", medio) + celula("Massa no mês", "reais", massa)
             + celula("Participação", "reais", barra) + "</tr>")
 
@@ -163,7 +165,6 @@ def contracheque(mun: dict, dados: dict, interativo: bool = True) -> str:
           <tr>
             <th scope="col">Fonte de renda</th>
             <th scope="col" class="num">Pessoas</th>
-            <th scope="col" class="num">Por 100 adultos</th>
             <th scope="col" class="num">Valor médio</th>
             <th scope="col" class="num">Massa no mês</th>
             <th scope="col" class="num">Participação</th>

@@ -212,6 +212,10 @@ tr[data-linha="bolsa_familia"]   { --cor: var(--c-bf); }
   .barra-pct { text-align: right; }
   .topo h1 { font-size: 1.75rem; }
   .holerite-municipio { font-size: 2rem; }
+  /* sem a coluna "Por 100 adultos" do lado, a celula de Pessoas so tinha o numero --
+     column-reverse poe a unidade (Vinculos/Beneficios/Familias) como rotulo em cima,
+     sem mudar a ordem no DOM (que no celular fica "642.188 vinculos", mais natural). */
+  .linhas td[data-col="Pessoas"] { display: flex; flex-direction: column-reverse; align-items: flex-end; gap: 0.125rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -325,6 +329,13 @@ tr[data-linha="bolsa_familia"]   { --cor: var(--c-bf); }
 .ranking tbody tr.alvo th { font-weight: 700; }
 .ranking .marca { display: inline-block; width: 0.5rem; height: 0.5rem; border-radius: 50%; margin-right: 0.4375rem; background: var(--cor-reg, var(--tinta-tenue)); }
 .ranking-obs { font-size: 0.75rem; color: var(--tinta-fraca); margin: 0.5rem 0 0; }
+.ranking-mais {
+  font: inherit; font-size: 0.8125rem; font-weight: 600; margin-top: 0.625rem;
+  padding: 0.375rem 0.875rem; cursor: pointer; color: var(--tinta-fraca);
+  background: var(--papel); border: 1px solid var(--linha-forte); border-radius: var(--raio);
+}
+.ranking-mais:hover { color: var(--tinta); border-color: var(--tinta-tenue); }
+.ranking-mais[hidden] { display: none; }
 
 @media (max-width: 47.99rem) {
   .ranking td:nth-child(4), .ranking th:nth-child(4) { display: none; }

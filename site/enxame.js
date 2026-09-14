@@ -31,6 +31,7 @@
   // pré-cálculo original. Mantém a mesma proporção de ponto e folga em qualquer tela.
   const REF = 1400, R_MIN = 1.1, R_MAX = 6.0, FOLGA = 0.15;
   const MAX_LINHAS = 50;
+  const LINHAS_INICIAIS = 10;
 
   // Plano de composição: um quadrante por fonte, em ordem circular.
   //
@@ -61,6 +62,7 @@
   let escopo = 'estado';
   let porte = '';
   let foco = null;            // grupo destacado pela legenda (região, UF ou fonte dominante)
+  let expandidoTabela = false; // false = só as 10 primeiras linhas do ranking
   let ampliado = false;
 
   const svg = d3.select(svgEl);
@@ -527,7 +529,8 @@
     }
     linhas.sort((a, b) => b.part - a.part);
 
-    const mostrar = linhas.slice(0, MAX_LINHAS);
+    const limite = expandidoTabela ? MAX_LINHAS : LINHAS_INICIAIS;
+    const mostrar = linhas.slice(0, limite);
     const oAlvo = linhas.find((r) => r.id === alvo);
     // o município escolhido nunca some da tabela, mesmo fora das primeiras posições
     if (oAlvo && !mostrar.includes(oAlvo)) mostrar.push(oAlvo);
@@ -553,6 +556,12 @@
     }
     document.querySelector('[data-v="fonte-nome"]').textContent = NOMES[fonte];
     document.querySelector('[data-v="ranking-n"]').textContent = fmt(linhas.length);
+    document.querySelector('[data-v="ranking-exibindo"]').textContent = fmt(mostrar.length);
+
+    const botaoMais = document.getElementById('ranking-mais');
+    const restam = Math.min(linhas.length, MAX_LINHAS) - Math.min(linhas.length, LINHAS_INICIAIS);
+    botaoMais.hidden = restam <= 0;
+    botaoMais.textContent = expandidoTabela ? 'Mostrar menos' : 'Mostrar mais';
   }
 
   // ---------------------------------------------------------------- ampliar
@@ -617,7 +626,13 @@
   painel.addEventListener('change', (e) => {
     if (e.target.name === 'escopo') { escopo = e.target.value; foco = null; }
     if (e.target.name === 'porte') porte = e.target.value;
+    expandidoTabela = false;
     atualizar();
+  });
+
+  document.getElementById('ranking-mais').addEventListener('click', () => {
+    expandidoTabela = !expandidoTabela;
+    tabela();
   });
 
   // ---------------------------------------------------------------- interação
@@ -631,6 +646,7 @@
       if (!b || b.dataset.vista === vista) return;
       vista = b.dataset.vista;
       foco = null;
+      expandidoTabela = false;
       // cada vista desenha coisas diferentes nos mesmos grupos: sem limpar, a moldura do
       // plano fica por baixo do eixo da distribuicao
       gNos.selectAll('*').remove();
@@ -650,6 +666,7 @@
     fonte = b.dataset.fonte;
     secao.querySelectorAll('.seletor button').forEach((x) =>
       x.setAttribute('aria-pressed', String(x === b)));
+    expandidoTabela = false;
     atualizar();
   });
 
@@ -657,6 +674,7 @@
     const b = e.target.closest('.chave');
     if (!b) return;
     foco = foco === b.dataset.chave ? null : b.dataset.chave;   // clicar de novo desfaz
+    expandidoTabela = false;
     atualizar();
   });
 
@@ -702,6 +720,7 @@
   document.addEventListener('municipio:mudou', (e) => {
     alvo = e.detail.id;
     foco = null;
+    expandidoTabela = false;
     atualizar();
   });
 

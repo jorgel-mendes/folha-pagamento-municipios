@@ -6,7 +6,7 @@
 <title>Folha de Pagamento dos Municípios</title>
 <meta name="description" content="Quando muda uma regra do INSS, do Bolsa Família ou da folha da prefeitura, o efeito não chega igual em todo lugar. A composição da renda registrada nos 5.570 municípios brasileiros, em reais e em pessoas.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' rx='2' fill='%230f172a'/><path d='M4 3.5h8v9l-1.3-1-1.35 1-1.35-1-1.35 1-1.35-1L4 12.5z' fill='%23f8fafc'/><path d='M5.8 6h4.4M5.8 8h4.4M5.8 10h2.6' stroke='%230f172a' stroke-width='.9' stroke-linecap='round'/></svg>">
-  <link rel="stylesheet" href="estilo.css?v=d9b5cae6">
+  <link rel="stylesheet" href="estilo.css?v=8dbc8637">
 <script>
   document.documentElement.classList.add('js');
   // links antigos apontavam para /?m=XXXX — seguem funcionando
@@ -14,7 +14,7 @@
            if (m) location.replace('painel.html?m=' + encodeURIComponent(m)); })();
 </script>
 </head>
-<body data-versao="d9b5cae6">
+<body data-versao="8dbc8637">
 <div class="envelope porta">
 
   <header class="topo">
@@ -109,13 +109,12 @@
           <tr>
             <th scope="col">Fonte de renda</th>
             <th scope="col" class="num">Pessoas</th>
-            <th scope="col" class="num">Por 100 adultos</th>
             <th scope="col" class="num">Valor médio</th>
             <th scope="col" class="num">Massa no mês</th>
             <th scope="col" class="num">Participação</th>
           </tr>
         </thead>
-        <tbody><tr data-linha="salario_privado"><th scope="row"><span class="linha-nome">Salário — setor privado</span><span class="linha-fonte">RAIS 2025</span></th><td data-col="Pessoas" data-grupo="pessoas"><span class="valor" data-v="n">65</span><span class="unidade" data-v="unidade">vínculos</span></td><td data-col="Por 100 adultos" data-grupo="pessoas"><span class="valor" data-v="por100">0,8</span></td><td data-col="Valor médio" data-grupo="reais"><span class="valor" data-v="medio">R$ 1.912</span></td><td data-col="Massa no mês" data-grupo="reais"><span class="valor" data-v="massa">R$ 110,1 mil</span></td><td data-col="Participação" data-grupo="reais"><span class="barra"><i data-v="barra" style="width:1.43%"></i></span><span class="barra-pct" data-v="part">1,4%</span></td></tr><tr data-linha="salario_publico"><th scope="row"><span class="linha-nome">Salário — administração pública</span><span class="linha-fonte">RAIS 2025</span></th><td data-col="Pessoas" data-grupo="pessoas"><span class="valor" data-v="n">796</span><span class="unidade" data-v="unidade">vínculos</span></td><td data-col="Por 100 adultos" data-grupo="pessoas"><span class="valor" data-v="por100">9,8</span></td><td data-col="Valor médio" data-grupo="reais"><span class="valor" data-v="medio">R$ 2.958</span></td><td data-col="Massa no mês" data-grupo="reais"><span class="valor" data-v="massa">R$ 1,7 mi</span></td><td data-col="Participação" data-grupo="reais"><span class="barra"><i data-v="barra" style="width:22.25%"></i></span><span class="barra-pct" data-v="part">22,2%</span></td></tr><tr data-linha="previdencia"><th scope="row"><span class="linha-nome">Previdência — INSS e BPC</span><span class="linha-fonte">INSS</span></th><td data-col="Pessoas" data-grupo="pessoas"><span class="valor" data-v="n">3.280</span><span class="unidade" data-v="unidade">benefícios</span></td><td data-col="Por 100 adultos" data-grupo="pessoas"><span class="valor" data-v="por100">40,5</span></td><td data-col="Valor médio" data-grupo="reais"><span class="valor" data-v="medio">R$ 1.404</span></td><td data-col="Massa no mês" data-grupo="reais"><span class="valor" data-v="massa">R$ 4,6 mi</span></td><td data-col="Participação" data-grupo="reais"><span class="barra"><i data-v="barra" style="width:59.65%"></i></span><span class="barra-pct" data-v="part">59,7%</span></td></tr><tr data-linha="bolsa_familia"><th scope="row"><span class="linha-nome">Benefício social — Bolsa Família</span><span class="linha-fonte">Portal da Transparência</span></th><td data-col="Pessoas" data-grupo="pessoas"><span class="valor" data-v="n">1.960</span><span class="unidade" data-v="unidade">famílias</span></td><td data-col="Por 100 adultos" data-grupo="pessoas"><span class="valor" data-v="por100">24,2</span></td><td data-col="Valor médio" data-grupo="reais"><span class="valor" data-v="medio">R$ 656</span></td><td data-col="Massa no mês" data-grupo="reais"><span class="valor" data-v="massa">R$ 1,3 mi</span></td><td data-col="Participação" data-grupo="reais"><span class="barra"><i data-v="barra" style="width:16.67%"></i></span><span class="barra-pct" data-v="part">16,7%</span></td></tr></tbody>
+        <tbody><tr data-linha="salario_privado"><th scope="row"><span class="linha-nome">Salário — setor privado</span><span class="linha-fonte">RAIS 2025</span></th><td data-col="Pessoas" data-grupo="pessoas"><span class="valor" data-v="n">65</span><span class="unidade" data-v="unidade">vínculos</span></td><td data-col="Valor médio" data-grupo="reais"><span class="valor" data-v="medio">R$ 1.912</span></td><td data-col="Massa no mês" data-grupo="reais"><span class="valor" data-v="massa">R$ 110,1 mil</span></td><td data-col="Participação" data-grupo="reais"><span class="barra"><i data-v="barra" style="width:1.43%"></i></span><span class="barra-pct" data-v="part">1,4%</span></td></tr><tr data-linha="salario_publico"><th scope="row"><span class="linha-nome">Salário — administração pública</span><span class="linha-fonte">RAIS 2025</span></th><td data-col="Pessoas" data-grupo="pessoas"><span class="valor" data-v="n">796</span><span class="unidade" data-v="unidade">vínculos</span></td><td data-col="Valor médio" data-grupo="reais"><span class="valor" data-v="medio">R$ 2.958</span></td><td data-col="Massa no mês" data-grupo="reais"><span class="valor" data-v="massa">R$ 1,7 mi</span></td><td data-col="Participação" data-grupo="reais"><span class="barra"><i data-v="barra" style="width:22.25%"></i></span><span class="barra-pct" data-v="part">22,2%</span></td></tr><tr data-linha="previdencia"><th scope="row"><span class="linha-nome">Previdência — INSS e BPC</span><span class="linha-fonte">INSS</span></th><td data-col="Pessoas" data-grupo="pessoas"><span class="valor" data-v="n">3.280</span><span class="unidade" data-v="unidade">benefícios</span></td><td data-col="Valor médio" data-grupo="reais"><span class="valor" data-v="medio">R$ 1.404</span></td><td data-col="Massa no mês" data-grupo="reais"><span class="valor" data-v="massa">R$ 4,6 mi</span></td><td data-col="Participação" data-grupo="reais"><span class="barra"><i data-v="barra" style="width:59.65%"></i></span><span class="barra-pct" data-v="part">59,7%</span></td></tr><tr data-linha="bolsa_familia"><th scope="row"><span class="linha-nome">Benefício social — Bolsa Família</span><span class="linha-fonte">Portal da Transparência</span></th><td data-col="Pessoas" data-grupo="pessoas"><span class="valor" data-v="n">1.960</span><span class="unidade" data-v="unidade">famílias</span></td><td data-col="Valor médio" data-grupo="reais"><span class="valor" data-v="medio">R$ 656</span></td><td data-col="Massa no mês" data-grupo="reais"><span class="valor" data-v="massa">R$ 1,3 mi</span></td><td data-col="Participação" data-grupo="reais"><span class="barra"><i data-v="barra" style="width:16.67%"></i></span><span class="barra-pct" data-v="part">16,7%</span></td></tr></tbody>
       </table>
 
       <div class="total">
@@ -226,6 +225,6 @@
   </footer>
 
 </div>
-<script src="app.js?v=d9b5cae6"></script>
+<script src="app.js?v=8dbc8637"></script>
 </body>
 </html>

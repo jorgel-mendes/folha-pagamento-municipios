@@ -71,7 +71,7 @@
       if (!l) {
         tr.setAttribute('data-ausente', 'sim');
         tr.title = 'Sem dado publicado para este município nesta fonte';
-        ['n', 'por100', 'medio', 'massa', 'part'].forEach((k) => põe(tr, k, TRACO));
+        ['n', 'medio', 'massa', 'part'].forEach((k) => põe(tr, k, TRACO));
         põe(tr, 'unidade', '');
         if (barra) barra.style.width = '0%';
         continue;
@@ -81,7 +81,6 @@
       tr.removeAttribute('title');
       põe(tr, 'n', fmt(l.n));
       põe(tr, 'unidade', UNIDADES[l.unidade] || l.unidade);
-      põe(tr, 'por100', fmt(l.por100, 1));
       põe(tr, 'medio', 'R$ ' + fmt(l.medio));
       põe(tr, 'massa', formatarMassa(l.massa));
       põe(tr, 'part', fmt(l.part * 100, 1) + '%');

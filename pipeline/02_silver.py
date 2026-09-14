@@ -417,11 +417,15 @@ def rais(con, ano: str, dst: Path) -> None:
     # `massa_salarial` soma todo mundo, sem corte -- massa e total, nao estimativa central.
     # `base_media_*` aplica o corte da RAIS de 0,7 a 30 salarios minimos, e serve **apenas**
     # para o calculo da media. `massa_media_anual` guarda a remuneracao media do ano como
-    # medida alternativa, para comparacao.
+    # medida alternativa, para comparacao. `massa_media_gap` guarda so a parte dessa media
+    # que cobre vinculo SEM dezembro (nulo ou zero) -- e o que a gold soma ao dezembro real
+    # pra montar a massa publica hibrida (dezembro de quem reportou + media so de quem nao
+    # reportou). Ver nota tecnica.
     piso, teto = C.faixa_media_reais(ano)
     C.log(f"  corte da media: R$ {piso:,.2f} a R$ {teto:,.2f} "
           f"({C.FAIXA_MEDIA_SM[0]} a {C.FAIXA_MEDIA_SM[1]} SM de {ano}, SM = R$ {C.SALARIO_MINIMO[ano]:,.2f})")
     na_faixa = f"r.remun_dez BETWEEN {piso} AND {teto}"
+    sem_dezembro = "(r.remun_dez IS NULL OR r.remun_dez = 0)"
     con.execute(f"""COPY (
         SELECT d.cod_ibge, n.setor, n.esfera,
                count(*)::BIGINT                                        AS vinculos,
@@ -429,7 +433,8 @@ def rais(con, ano: str, dst: Path) -> None:
                count(*) FILTER (WHERE {na_faixa})::BIGINT              AS base_media_vinculos,
                sum(r.remun_dez) FILTER (WHERE {na_faixa})              AS base_media_massa,
                sum(coalesce(r.remun_med,0))                            AS massa_media_anual,
-               count(*) FILTER (WHERE r.remun_dez IS NULL)::BIGINT     AS vinculos_sem_dezembro
+               count(*) FILTER (WHERE r.remun_dez IS NULL)::BIGINT     AS vinculos_sem_dezembro,
+               sum(r.remun_med) FILTER (WHERE {sem_dezembro})          AS massa_media_gap
         FROM rais_bruto r
         JOIN dim d       ON substr(d.cod_ibge,1,6) = r.cod_mun6
         JOIN dim_nat n   ON n.nat_jur = r.nat_jur

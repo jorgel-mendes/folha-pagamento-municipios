@@ -7,7 +7,7 @@
 - Vínculos públicos: **13,403,645**
 - Benefícios do INSS: **41,184,257**
 - Famílias no Bolsa Família: **18,475,656**
-- Massa total registrada: **R$ 314,929,430,732.54** por mês
+- Massa total registrada: **R$ 318,718,110,086.01** por mês
 
 ## INSS — painel vs. agregado nacional oficial
 

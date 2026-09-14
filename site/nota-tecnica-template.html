@@ -109,29 +109,42 @@
       celetista. Usando só dezembro, a massa pública nacional saía subestimada em cerca de
       <strong>R$ 4,5 bilhões por mês</strong> (6,8% da linha), concentrados exatamente nas
       cidades com maior peso de funcionalismo estadual e federal — capitais, sobretudo. Por
-      isso a massa e a participação da folha pública usam a remuneração média do ano
-      (`salario_publico_massa`, derivada do campo `Vl Remun Média` da própria RAIS); o valor
-      médio por vínculo continua vindo da base filtrada de dezembro entre 0,7 e 30 salários
-      mínimos, sem mudança. O salário privado permanece em dezembro, que é o padrão do PDET e
-      não sofre desse problema de preenchimento. Essa troca muda a fonte dominante de 127
-      municípios (2,3% do total) no mapa — o achado nacional (previdência domina 62% das
-      cidades) não se move, mas duas capitais de estado trocam de cor: Salvador passa de
-      salário privado para folha pública, e Goiânia, o inverso.</p>
-    <p><strong>Mesmo corrigida, a folha pública provavelmente ainda está subestimada</strong>
-      <span class="pendente-marca">em revisão</span> — em graus diferentes por cidade. Depois
-      da troca para a remuneração média do ano, dá para comparar a massa pública contra o que
-      seria esperado (vínculos × valor médio) e ver quanto ainda falta: no Rio de Janeiro, a
-      massa corrigida chega a 68% do esperado — ainda incompleta, mas razoável. Em
-      <strong>Brasília, o caso mais extremo</strong>, chega a só <strong>37%</strong>. A
-      explicação provável é a mesma de antes, só que mais forte: Brasília não tem esfera
-      municipal — é 100% estadual e federal, exatamente as duas categorias com o pior
+      isso a massa e a participação da folha pública passaram a usar a remuneração média do
+      ano (`Vl Remun Média` da própria RAIS) em vez da de dezembro. Essa primeira troca mudou
+      a fonte dominante de 127 municípios (2,3% do total) no mapa — o achado nacional
+      (previdência dominava a maioria das cidades) não se moveu, mas duas capitais de estado
+      trocaram de cor: Salvador passou de salário privado para folha pública, e Goiânia, o
+      inverso.</p>
+    <p><strong>Revisão: a troca virou híbrida.</strong> Usar a média do ano pra todo mundo
+      trocava dado bom por estimativa sem necessidade — quem reportou dezembro certinho
+      (49,6% dos vínculos federais, 62% dos estaduais) tem ali um valor real, e a média do ano
+      tende a ser mais baixa que dezembro porque dezembro carrega o 13º salário. Por isso
+      `salario_publico_massa` hoje é <strong>dezembro para quem reportou, e a remuneração
+      média do ano só para quem não reportou</strong> (campo nulo ou zero) — o valor médio por
+      vínculo continua vindo da base filtrada de dezembro entre 0,7 e 30 salários mínimos, sem
+      mudança. Essa segunda troca aumentou a massa pública nacional de R$ 71,0 para
+      <strong>R$ 74,8 bilhões por mês</strong> (a massa total do painel foi de R$ 314,9 para
+      <strong>R$ 318,7 bilhões</strong>) e mudou a fonte dominante de mais 89 municípios — a
+      folha pública passa a dominar 440 cidades (7,9% do total, era 357). Duas capitais que
+      antes ficavam com o salário privado por uma margem mínima viram folha pública:
+      <strong>Brasília</strong> e <strong>Goiânia</strong>. Salvador segue folha pública, com
+      margem maior. O salário privado permanece em dezembro, que é o padrão do PDET e não
+      sofre desse problema de preenchimento.</p>
+    <p><strong>Mesmo com a híbrida, a folha pública provavelmente ainda está subestimada</strong>
+      <span class="pendente-marca">em revisão</span> — em graus diferentes por cidade. Dá para
+      comparar a massa pública contra o que seria esperado (vínculos × valor médio) e ver
+      quanto ainda falta: no Rio de Janeiro, a massa híbrida chega a 70% do esperado — ainda
+      incompleta, mas razoável, e a troca melhorou pouco esse número (era 68%). Em
+      <strong>Brasília, o caso mais extremo</strong>, chega a só <strong>39%</strong> (era
+      37%). A explicação provável é a mesma de antes, só que mais forte: Brasília não tem
+      esfera municipal — é 100% estadual e federal, exatamente as duas categorias com o pior
       preenchimento — então uma fração grande de vínculos, sobretudo federais, segue sem
       nenhum valor de remuneração atribuído em nenhum dos dois campos da RAIS, não só no de
-      dezembro. Não identificamos, nos dados que temos, uma terceira fonte que feche essa
-      lacuna (dependeria de outro campo da RAIS ou de uma base de folha de pagamento como o
-      SIAPE). Na prática, isso quer dizer que a folha pública de Brasília — e, em menor grau,
-      a de outras capitais com forte presença federal ou estadual — deve ser lida como um
-      piso, não como o valor real.</p>
+      dezembro. A híbrida não resolve isso, porque não há o que recuperar: não identificamos,
+      nos dados que temos, uma terceira fonte que feche essa lacuna (dependeria de outro campo
+      da RAIS ou de uma base de folha de pagamento como o SIAPE). Na prática, isso quer dizer
+      que a folha pública de Brasília — e, em menor grau, a de outras capitais com forte
+      presença federal ou estadual — deve ser lida como um piso, não como o valor real.</p>
     <p><strong>De-para de município:</strong> cada fonte usa um código próprio — INSS usa código
       e nome truncado em 11 caracteres, Bolsa Família usa o código SIAFI, RAIS e CadÚnico usam o
       prefixo de 6 dígitos do IBGE. O de-para do INSS combina UF, prefixo numérico e uma tabela

@@ -14,7 +14,7 @@ Uma linha por município. Valores monetários em reais nominais do mês de refer
 | `salario_privado_part` | Salário — setor privado — participação na massa total | proporção |
 | `salario_privado_por100` | Salário — setor privado — por 100 adultos | taxa |
 | `salario_publico_n` | Salário — administração pública — contagem (RAIS) | **vinculos** |
-| `salario_publico_massa` | Salário — administração pública — massa — remuneração média do ano (não a de dezembro; ver nota técnica) | R$ |
+| `salario_publico_massa` | Salário — administração pública — massa — dezembro de quem reportou, média do ano só de quem não reportou (vínculo híbrido; ver nota técnica) | R$ |
 | `salario_publico_medio` | Salário — administração pública — valor médio (base: 0.7 a 30.0 SM) | R$ / vinculo |
 | `salario_publico_part` | Salário — administração pública — participação na massa total | proporção |
 | `salario_publico_por100` | Salário — administração pública — por 100 adultos | taxa |
@@ -38,4 +38,4 @@ As colunas `_n` **não são comparáveis entre si e não devem ser somadas**. A 
 
 As colunas `_massa` **são** somáveis: representam fluxos de dinheiro distintos.
 
-`salario_publico_massa` usa a remuneração **média do ano** de cada vínculo, não a de dezembro como as demais linhas de salário. Motivo: o campo de remuneração de dezembro vem vazio em 50% dos vínculos federais e 38% dos estaduais na RAIS — estatutário não preenche esse campo tão bem quanto celetista. Detalhes na nota técnica.
+`salario_publico_massa` é **híbrida**: usa a remuneração de dezembro do vínculo que reportou, e só recorre à remuneração média do ano no vínculo que não reportou (nulo ou zero) — diferente das demais linhas de salário, que usam só dezembro. Motivo: o campo de remuneração de dezembro vem vazio em 50% dos vínculos federais e 38% dos estaduais na RAIS — estatutário não preenche esse campo tão bem quanto celetista. Detalhes na nota técnica.
